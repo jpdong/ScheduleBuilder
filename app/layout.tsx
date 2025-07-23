@@ -5,16 +5,16 @@ import GoogleAnalytics from '../src/components/analytics/GoogleAnalytics'
 import CookieConsent from '../src/components/analytics/CookieConsent'
 
 export const metadata: Metadata = {
-  title: 'Random Letter Generator - Free Online Tool',
-  description: 'Generate random letters with our free online tool. Customize case, quantity, and excluded letters. Perfect for word games, teaching, and creative projects.',
+  title: 'Schedule Builder - Free Online Calendar & Event Management Tool',
+  description: 'Create, manage, and share your schedules with our free online Schedule Builder. Multiple calendar views, reminders, and easy sharing. Perfect for personal, business, and team planning.',
   icons: {
     icon: '/logo.png',
   },
   
   alternates: {
-      canonical: `https://randomletter.net/`,
+      canonical: `https://schedule-builder.net/`,
     },
-  
+  keywords: 'schedule builder, calendar tool, event management, online scheduler, meeting planner, time management, schedule sharing, free calendar'
 }
 
 export default function RootLayout({
