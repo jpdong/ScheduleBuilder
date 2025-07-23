@@ -13,22 +13,22 @@ const ReminderSettings: React.FC<ReminderSettingsProps> = ({
   onChange,
   error
 }) => {
-  // 提醒选项
+  // Reminder options
   const reminderOptions = getReminderOptions();
   
-  // 处理提醒变化
+  // Handle reminder change
   const handleReminderChange = (index: number, value: number) => {
     const newReminders = [...reminders];
     newReminders[index] = { time: value };
     onChange(newReminders);
   };
   
-  // 添加提醒
+  // Add reminder
   const handleAddReminder = () => {
     onChange([...reminders, { time: 15 }]);
   };
   
-  // 删除提醒
+  // Remove reminder
   const handleRemoveReminder = (index: number) => {
     const newReminders = reminders.filter((_, i) => i !== index);
     onChange(newReminders);
@@ -38,7 +38,7 @@ const ReminderSettings: React.FC<ReminderSettingsProps> = ({
     <div className="reminder-settings">
       <div style={{ marginBottom: '15px' }}>
         <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-          提醒设置
+          Reminder Settings
         </label>
         
         {reminders.map((reminder, index) => (
@@ -76,7 +76,7 @@ const ReminderSettings: React.FC<ReminderSettingsProps> = ({
                 fontSize: '1.2rem',
                 padding: '0 10px'
               }}
-              aria-label="删除提醒"
+              aria-label="Delete reminder"
             >
               ×
             </button>
@@ -100,7 +100,7 @@ const ReminderSettings: React.FC<ReminderSettingsProps> = ({
             gap: '5px'
           }}
         >
-          <span style={{ fontSize: '1.2rem' }}>+</span> 添加提醒
+          <span style={{ fontSize: '1.2rem' }}>+</span> Add Reminder
         </button>
         
         {error && (
@@ -119,8 +119,8 @@ const ReminderSettings: React.FC<ReminderSettingsProps> = ({
         marginBottom: '15px'
       }}>
         <p style={{ margin: 0 }}>
-          <strong>提示：</strong> 提醒将在日程开始前的指定时间通过浏览器通知发送。
-          请确保您已授权浏览器通知权限。
+          <strong>Tip:</strong> Reminders will be sent via browser notifications at the specified time before the schedule starts.
+          Please ensure you have authorized browser notification permissions.
         </p>
       </div>
     </div>

@@ -19,30 +19,30 @@ interface ScheduleCreatorProps {
 const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, onCancel }) => {
   const { addSchedule, updateSchedule, checkConflict } = useSchedule();
   
-  // 表单状态
+  // Form state
   const [formData, setFormData] = useState<ScheduleFormData>({
     title: initialData?.title || '',
     description: initialData?.description || '',
     startTime: initialData?.startTime || new Date(),
-    endTime: initialData?.endTime || new Date(Date.now() + 60 * 60 * 1000), // 默认1小时后
+    endTime: initialData?.endTime || new Date(Date.now() + 60 * 60 * 1000), // Default 1 hour later
     color: initialData?.color || '#4CAF50',
     reminders: initialData?.reminders.map(r => ({
       time: Math.round((r.time.getTime() - initialData.startTime.getTime()) / (60 * 1000) * -1)
-    })) || [{ time: 15 }] // 默认提前15分钟
+    })) || [{ time: 15 }] // Default 15 minutes before
   });
   
-  // 错误状态
+  // Error state
   const [errors, setErrors] = useState<ScheduleValidationError>({});
   const [showConflictWarning, setShowConflictWarning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // 日期和时间字符串状态（用于表单输入）
+  // Date and time string states (for form inputs)
   const [startDate, setStartDate] = useState(formatDate(formData.startTime));
   const [startTime, setStartTime] = useState(formatTime(formData.startTime));
   const [endDate, setEndDate] = useState(formatDate(formData.endTime));
   const [endTime, setEndTime] = useState(formatTime(formData.endTime));
   
-  // 当日期或时间字符串更改时，更新表单数据中的日期对象
+  // When date or time strings change, update date objects in form data
   useEffect(() => {
     const newStartTime = new Date(`${startDate}T${startTime}`);
     const newEndTime = new Date(`${endDate}T${endTime}`);
@@ -56,11 +56,11 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
     }
   }, [startDate, startTime, endDate, endTime]);
   
-  // 冲突检测状态
+  // Conflict detection state
   const [conflictingSchedules, setConflictingSchedules] = useState<Schedule[]>([]);
   const { schedules } = useSchedule();
   
-  // 检查冲突
+  // Check conflicts
   useEffect(() => {
     const scheduleToCheck = {
       id: initialData?.id || 'new',
@@ -76,18 +76,18 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
     });
   }, [formData.startTime, formData.endTime, initialData, schedules]);
   
-  // 处理输入变化
+  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // 清除相关错误
+    // Clear related errors
     if (errors[name as keyof ScheduleValidationError]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
   
-  // 处理日期变化
+  // Handle date changes
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'startDate') {
@@ -97,7 +97,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
     }
   };
   
-  // 处理时间变化
+  // Handle time changes
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'startTime') {
@@ -107,20 +107,20 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
     }
   };
   
-  // 处理颜色变化
+  // Handle color changes
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, color: e.target.value }));
   };
   
-  // 通知权限状态
+  // Notification permission state
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
   
-  // 提交表单
+  // Submit form
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // 验证表单
+    // Validate form
     const validationErrors = validateScheduleForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -129,7 +129,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
     }
     
     try {
-      // 创建提醒对象
+      // Create reminder objects
       const reminders = formData.reminders.map(r => ({
         id: generateId(),
         time: new Date(formData.startTime.getTime() - r.time * 60 * 1000),
@@ -139,7 +139,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
       let savedSchedule: Schedule;
       
       if (initialData) {
-        // 更新现有日程
+        // Update existing schedule
         savedSchedule = await updateSchedule(initialData.id, {
           title: formData.title,
           description: formData.description,
@@ -149,7 +149,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
           reminders
         });
       } else {
-        // 创建新日程
+        // Create new schedule
         savedSchedule = await addSchedule({
           title: formData.title,
           description: formData.description,
@@ -164,13 +164,13 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
       onSave(savedSchedule);
     } catch (error) {
       console.error('Failed to save schedule:', error);
-      setErrors({ general: '保存日程时出错，请重试。' });
+      setErrors({ general: 'Error saving schedule. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  // 处理通知权限变化
+  // Handle notification permission changes
   const handlePermissionChange = (permission: NotificationPermission) => {
     setNotificationPermission(permission);
   };
@@ -186,7 +186,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
         margin: '0 auto'
       }}>
         <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>
-          {initialData ? '编辑日程' : '创建新日程'}
+          {initialData ? 'Edit Schedule' : 'Create New Schedule'}
         </h2>
         
         {errors.general && (
@@ -232,10 +232,10 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
         )}
         
         <form onSubmit={handleSubmit}>
-          {/* 标题 */}
+          {/* Title */}
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              标题 *
+              Title *
             </label>
             <input
               type="text"
@@ -248,7 +248,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
                 borderRadius: '4px',
                 border: errors.title ? '1px solid #D32F2F' : '1px solid #ddd'
               }}
-              placeholder="输入日程标题"
+              placeholder="Enter schedule title"
             />
             {errors.title && (
               <div style={{ color: '#D32F2F', fontSize: '0.8rem', marginTop: '5px' }}>
@@ -257,10 +257,10 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
             )}
           </div>
           
-          {/* 描述 */}
+          {/* Description */}
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              描述
+              Description
             </label>
             <textarea
               name="description"
@@ -273,7 +273,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
                 border: errors.description ? '1px solid #D32F2F' : '1px solid #ddd',
                 minHeight: '100px'
               }}
-              placeholder="输入日程描述（可选）"
+              placeholder="Enter schedule description (optional)"
             />
             {errors.description && (
               <div style={{ color: '#D32F2F', fontSize: '0.8rem', marginTop: '5px' }}>
@@ -282,10 +282,10 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
             )}
           </div>
           
-          {/* 开始时间 */}
+          {/* Start time */}
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              开始时间 *
+              Start Time *
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
               <input
@@ -320,10 +320,10 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
             )}
           </div>
           
-          {/* 结束时间 */}
+          {/* End time */}
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              结束时间 *
+              End Time *
             </label>
             <div style={{ display: 'flex', gap: '10px' }}>
               <input
@@ -358,10 +358,10 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
             )}
           </div>
           
-          {/* 颜色 */}
+          {/* Color */}
           <div style={{ marginBottom: '15px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              颜色
+              Color
             </label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <input
@@ -403,7 +403,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
             error={errors.reminders}
           />
           
-          {/* 按钮 */}
+          {/* Buttons */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
             <button
               type="button"
@@ -417,7 +417,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
               }}
               disabled={isSubmitting}
             >
-              取消
+              Cancel
             </button>
             <button
               type="submit"
@@ -432,7 +432,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
               }}
               disabled={isSubmitting}
             >
-              {isSubmitting ? '保存中...' : (initialData ? '更新' : '创建')}
+              {isSubmitting ? 'Saving...' : (initialData ? 'Update' : 'Create')}
             </button>
           </div>
         </form>

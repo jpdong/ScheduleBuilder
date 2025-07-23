@@ -8,17 +8,17 @@ interface NotificationPermissionProps {
 const NotificationPermission: React.FC<NotificationPermissionProps> = ({ 
   onPermissionChange 
 }) => {
-  // 通知权限状态
+  // Notification permission state
   const [permission, setPermission] = useState<NotificationPermission>('default');
   
-  // 检查通知权限
+  // Check notification permission
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setPermission(Notification.permission);
     }
   }, []);
   
-  // 请求通知权限
+  // Request notification permission
   const requestPermission = async () => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       try {
@@ -33,7 +33,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
     }
   };
   
-  // 如果浏览器不支持通知
+  // If browser doesn't support notifications
   if (typeof window === 'undefined' || !('Notification' in window)) {
     return (
       <div style={{ 
@@ -43,13 +43,13 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
         marginBottom: '15px'
       }}>
         <p style={{ margin: 0, color: '#D32F2F' }}>
-          您的浏览器不支持通知功能，提醒将无法正常工作。
+          Your browser doesn't support notifications. Reminders will not work properly.
         </p>
       </div>
     );
   }
   
-  // 如果已授权
+  // If permission is granted
   if (permission === 'granted') {
     return (
       <div style={{ 
@@ -60,13 +60,13 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
       }}>
         <p style={{ margin: 0, color: '#2E7D32' }}>
           <span style={{ marginRight: '5px' }}>✓</span>
-          通知权限已授权，您将收到日程提醒。
+          Notification permission granted. You will receive schedule reminders.
         </p>
       </div>
     );
   }
   
-  // 如果被拒绝
+  // If permission is denied
   if (permission === 'denied') {
     return (
       <div style={{ 
@@ -76,13 +76,13 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
         marginBottom: '15px'
       }}>
         <p style={{ margin: 0, color: '#D32F2F' }}>
-          通知权限已被拒绝，您将无法收到日程提醒。请在浏览器设置中启用通知权限。
+          Notification permission denied. You will not receive schedule reminders. Please enable notification permission in your browser settings.
         </p>
       </div>
     );
   }
   
-  // 如果未决定
+  // If permission is default/undecided
   return (
     <div style={{ 
       padding: '15px', 
@@ -91,7 +91,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
       marginBottom: '15px'
     }}>
       <p style={{ marginTop: 0, marginBottom: '10px', color: '#E65100' }}>
-        要接收日程提醒，您需要授权通知权限。
+        To receive schedule reminders, you need to authorize notification permissions.
       </p>
       <button
         onClick={requestPermission}
@@ -104,7 +104,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
           cursor: 'pointer'
         }}
       >
-        授权通知权限
+        Allow Notifications
       </button>
     </div>
   );

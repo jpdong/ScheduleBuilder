@@ -18,75 +18,75 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
   onShare,
   onBack
 }) => {
-  // 确认删除
+  // Confirm delete
   const confirmDelete = () => {
-    if (window.confirm(`确定要删除日程 "${schedule.title}" 吗？`)) {
+    if (window.confirm(`Are you sure you want to delete the schedule "${schedule.title}"?`)) {
       onDelete();
     }
   };
-  
-  // 计算日程持续时间
+
+  // Calculate schedule duration
   const getDuration = () => {
     const durationMs = schedule.endTime.getTime() - schedule.startTime.getTime();
     const hours = Math.floor(durationMs / (1000 * 60 * 60));
     const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (hours === 0) {
-      return `${minutes} 分钟`;
+      return `${minutes} minutes`;
     } else if (minutes === 0) {
-      return `${hours} 小时`;
+      return `${hours} hours`;
     } else {
-      return `${hours} 小时 ${minutes} 分钟`;
+      return `${hours} hours ${minutes} minutes`;
     }
   };
-  
-  // 获取提醒文本
+
+  // Get reminder text
   const getReminderText = () => {
     if (schedule.reminders.length === 0) {
-      return '无提醒';
+      return 'No reminders';
     }
-    
+
     return schedule.reminders.map(reminder => {
       const diffMs = schedule.startTime.getTime() - reminder.time.getTime();
       const diffMinutes = Math.round(diffMs / (1000 * 60));
-      
+
       if (diffMinutes === 0) {
-        return '准时提醒';
+        return 'At time of event';
       } else if (diffMinutes < 60) {
-        return `提前 ${diffMinutes} 分钟`;
+        return `${diffMinutes} minutes before`;
       } else if (diffMinutes === 60) {
-        return '提前 1 小时';
+        return '1 hour before';
       } else if (diffMinutes < 1440) {
         const hours = Math.floor(diffMinutes / 60);
         const minutes = diffMinutes % 60;
         if (minutes === 0) {
-          return `提前 ${hours} 小时`;
+          return `${hours} hours before`;
         } else {
-          return `提前 ${hours} 小时 ${minutes} 分钟`;
+          return `${hours} hours ${minutes} minutes before`;
         }
       } else {
         const days = Math.floor(diffMinutes / 1440);
-        return `提前 ${days} 天`;
+        return `${days} days before`;
       }
     }).join(', ');
   };
-  
+
   return (
     <div className="schedule-detail">
-      <div style={{ 
-        background: 'white', 
-        borderRadius: '8px', 
+      <div style={{
+        background: 'white',
+        borderRadius: '8px',
         overflow: 'hidden',
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
       }}>
-        {/* 颜色标记 */}
-        <div style={{ 
-          height: '10px', 
-          background: schedule.color || '#4CAF50' 
+        {/* Color marker */}
+        <div style={{
+          height: '10px',
+          background: schedule.color || '#4CAF50'
         }} />
-        
-        {/* 标题和操作按钮 */}
-        <div style={{ 
+
+        {/* Title and action buttons */}
+        <div style={{
           padding: '20px',
           borderBottom: '1px solid #eee',
           display: 'flex',
@@ -100,16 +100,16 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
               {schedule.title}
             </h2>
             <div style={{ color: '#666', fontSize: '0.9rem' }}>
-              创建于 {formatDateTime(schedule.createdAt)}
-              {schedule.updatedAt > schedule.createdAt && 
-                ` · 更新于 ${formatDateTime(schedule.updatedAt)}`}
+              Created on {formatDateTime(schedule.createdAt)}
+              {schedule.updatedAt > schedule.createdAt &&
+                ` · Updated on ${formatDateTime(schedule.updatedAt)}`}
             </div>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
               onClick={onBack}
-              style={{ 
+              style={{
                 background: 'none',
                 border: '1px solid #ddd',
                 padding: '8px 15px',
@@ -117,11 +117,11 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
                 cursor: 'pointer'
               }}
             >
-              返回
+              Back
             </button>
             <button
               onClick={onEdit}
-              style={{ 
+              style={{
                 background: '#4CAF50',
                 color: 'white',
                 border: 'none',
@@ -130,26 +130,26 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
                 cursor: 'pointer'
               }}
             >
-              编辑
+              Edit
             </button>
           </div>
         </div>
-        
-        {/* 详细信息 */}
+
+        {/* Detailed information */}
         <div style={{ padding: '20px' }}>
-          {/* 时间信息 */}
-          <div style={{ 
-            display: 'flex', 
+          {/* Time information */}
+          <div style={{
+            display: 'flex',
             alignItems: 'center',
             marginBottom: '20px',
             padding: '15px',
             background: '#f9f9f9',
             borderRadius: '8px'
           }}>
-            <div style={{ 
-              fontSize: '1.5rem', 
-              color: '#4CAF50', 
-              marginRight: '15px' 
+            <div style={{
+              fontSize: '1.5rem',
+              color: '#4CAF50',
+              marginRight: '15px'
             }}>
               ⏱️
             </div>
@@ -158,18 +158,18 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
                 {formatDateTime(schedule.startTime)} - {formatDateTime(schedule.endTime)}
               </div>
               <div style={{ color: '#666', fontSize: '0.9rem' }}>
-                持续时间：{getDuration()}
+                Duration: {getDuration()}
               </div>
             </div>
           </div>
-          
-          {/* 描述 */}
+
+          {/* Description */}
           {schedule.description && (
             <div style={{ marginBottom: '20px' }}>
               <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>
-                描述
+                Description
               </h3>
-              <div style={{ 
+              <div style={{
                 whiteSpace: 'pre-wrap',
                 padding: '15px',
                 background: '#f9f9f9',
@@ -180,13 +180,13 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
               </div>
             </div>
           )}
-          
-          {/* 提醒 */}
+
+          {/* Reminders */}
           <div style={{ marginBottom: '20px' }}>
             <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>
-              提醒
+              Reminders
             </h3>
-            <div style={{ 
+            <div style={{
               padding: '15px',
               background: '#f9f9f9',
               borderRadius: '8px',
@@ -195,55 +195,9 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
               {getReminderText()}
             </div>
           </div>
-          
-          {/* 分享状态 */}
-          <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>
-              分享状态
-            </h3>
-            <div style={{ 
-              padding: '15px',
-              background: '#f9f9f9',
-              borderRadius: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              {schedule.shared ? (
-                <div>
-                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
-                    已分享
-                  </div>
-                  <div style={{ color: '#666', fontSize: '0.9rem' }}>
-                    权限：{schedule.shareSettings?.permission === 'read' ? '只读' : '可编辑'}
-                    {schedule.shareSettings?.expiresAt && 
-                      ` · 过期时间：${formatDateTime(schedule.shareSettings.expiresAt)}`}
-                  </div>
-                </div>
-              ) : (
-                <div style={{ color: '#666' }}>
-                  未分享
-                </div>
-              )}
-              
-              <button
-                onClick={onShare}
-                style={{ 
-                  background: '#2196F3',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 15px',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                {schedule.shared ? '管理分享' : '分享'}
-              </button>
-            </div>
-          </div>
-          
-          {/* 删除按钮 */}
-          <div style={{ 
+
+          {/* Delete button */}
+          <div style={{
             borderTop: '1px solid #eee',
             paddingTop: '20px',
             marginTop: '20px',
@@ -251,7 +205,7 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
           }}>
             <button
               onClick={confirmDelete}
-              style={{ 
+              style={{
                 background: '#FFEBEE',
                 color: '#D32F2F',
                 border: 'none',
@@ -260,7 +214,7 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
                 cursor: 'pointer'
               }}
             >
-              删除日程
+              Delete Schedule
             </button>
           </div>
         </div>

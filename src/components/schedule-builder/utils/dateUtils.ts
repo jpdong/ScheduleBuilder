@@ -102,18 +102,18 @@ export const getDaysBetween = (start: Date, end: Date): number => {
 };
 
 /**
- * 获取提醒时间选项
- * @returns 提醒时间选项数组
+ * Get reminder time options
+ * @returns Array of reminder time options
  */
 export const getReminderOptions = (): { label: string; value: number }[] => {
   return [
-    { label: '不提醒', value: 0 },
-    { label: '5分钟前', value: 5 },
-    { label: '15分钟前', value: 15 },
-    { label: '30分钟前', value: 30 },
-    { label: '1小时前', value: 60 },
-    { label: '2小时前', value: 120 },
-    { label: '1天前', value: 1440 },
+    { label: 'No reminder', value: 0 },
+    { label: '5 minutes before', value: 5 },
+    { label: '15 minutes before', value: 15 },
+    { label: '30 minutes before', value: 30 },
+    { label: '1 hour before', value: 60 },
+    { label: '2 hours before', value: 120 },
+    { label: '1 day before', value: 1440 },
   ];
 };
 

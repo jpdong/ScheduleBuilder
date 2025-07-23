@@ -17,31 +17,31 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
   onDelete, 
   onView 
 }) => {
-  // 排序和筛选状态
+  // Sort and filter state
   const [sortBy, setSortBy] = useState<'startTime' | 'title'>('startTime');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
   
-  // 处理排序变化
+  // Handle sort change
   const handleSortChange = (field: 'startTime' | 'title') => {
     if (sortBy === field) {
-      // 如果已经按此字段排序，则切换排序顺序
+      // If already sorting by this field, toggle sort order
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
-      // 否则，切换排序字段，并设置为升序
+      // Otherwise, switch sort field and set to ascending
       setSortBy(field);
       setSortOrder('asc');
     }
   };
   
-  // 处理搜索变化
+  // Handle search change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
   
-  // 筛选和排序日程
+  // Filter and sort schedules
   const filteredAndSortedSchedules = useMemo(() => {
-    // 筛选
+    // Filter
     let result = schedules;
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
@@ -51,7 +51,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
       );
     }
     
-    // 排序
+    // Sort
     result = [...result].sort((a, b) => {
       if (sortBy === 'startTime') {
         return sortOrder === 'asc' 
@@ -67,16 +67,16 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
     return result;
   }, [schedules, searchTerm, sortBy, sortOrder]);
   
-  // 确认删除
+  // Confirm delete
   const confirmDelete = (id: string, title: string) => {
-    if (window.confirm(`确定要删除日程 "${title}" 吗？`)) {
+    if (window.confirm(`Are you sure you want to delete schedule "${title}"?`)) {
       onDelete(id);
     }
   };
   
   return (
     <div className="schedule-list">
-      {/* 搜索和排序控件 */}
+      {/* Search and sort controls */}
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -85,13 +85,13 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
         flexWrap: 'wrap',
         gap: '10px'
       }}>
-        {/* 搜索框 */}
+        {/* Search box */}
         <div style={{ flex: '1', minWidth: '200px' }}>
           <input
             type="text"
             value={searchTerm}
             onChange={handleSearchChange}
-            placeholder="搜索日程..."
+            placeholder="Search schedules..."
             style={{ 
               width: '100%',
               padding: '8px 12px',
@@ -101,9 +101,9 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
           />
         </div>
         
-        {/* 排序控件 */}
+        {/* Sort controls */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <span>排序：</span>
+          <span>Sort by:</span>
           <button
             onClick={() => handleSortChange('startTime')}
             style={{ 
@@ -117,7 +117,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
               gap: '5px'
             }}
           >
-            时间
+            Time
             {sortBy === 'startTime' && (
               <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
             )}
@@ -135,7 +135,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
               gap: '5px'
             }}
           >
-            标题
+            Title
             {sortBy === 'title' && (
               <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
             )}
@@ -143,14 +143,14 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
         </div>
       </div>
       
-      {/* 日程列表 */}
+      {/* Schedule list */}
       {filteredAndSortedSchedules.length === 0 ? (
         <EmptyState
-          title={searchTerm ? '没有找到匹配的日程' : '暂无日程安排'}
+          title={searchTerm ? 'No matching schedules found' : 'No schedules yet'}
           description={searchTerm 
-            ? '尝试使用不同的搜索词，或清除搜索以查看所有日程。' 
-            : '点击"创建新日程"按钮开始添加您的第一个日程安排。'}
-          actionText={searchTerm ? '清除搜索' : undefined}
+            ? 'Try using different search terms, or clear the search to see all schedules.' 
+            : 'Click the "Create New Schedule" button to add your first schedule.'}
+          actionText={searchTerm ? 'Clear Search' : undefined}
           onAction={searchTerm ? () => setSearchTerm('') : undefined}
           icon={searchTerm ? '🔍' : '📅'}
         />
@@ -235,7 +235,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     color: '#2196F3'
                   }}
                 >
-                  查看
+                  View
                 </button>
                 <button
                   onClick={() => onEdit(schedule.id)}
@@ -248,7 +248,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     color: '#4CAF50'
                   }}
                 >
-                  编辑
+                  Edit
                 </button>
                 <button
                   onClick={() => confirmDelete(schedule.id, schedule.title)}
@@ -261,7 +261,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     color: '#F44336'
                   }}
                 >
-                  删除
+                  Delete
                 </button>
               </div>
             </div>

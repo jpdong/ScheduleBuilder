@@ -6,7 +6,6 @@ import ScheduleList from './ScheduleList';
 import ScheduleCalendar from './ScheduleCalendar';
 import ScheduleCreator from './ScheduleCreator';
 import ScheduleDetail from './ScheduleDetail';
-import ScheduleShare from './ScheduleShare';
 import NotificationManager from './NotificationManager';
 import EmptyState from './EmptyState';
 
@@ -27,7 +26,6 @@ const ScheduleBuilderApp: React.FC = () => {
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   
   // 从 URL 参数中获取日程 ID
   useEffect(() => {
@@ -49,7 +47,6 @@ const ScheduleBuilderApp: React.FC = () => {
     setIsCreating(true);
     setSelectedSchedule(null);
     setIsEditing(false);
-    setIsSharing(false);
   };
   
   // 处理保存日程
@@ -72,7 +69,6 @@ const ScheduleBuilderApp: React.FC = () => {
       setSelectedSchedule(schedule);
       setIsEditing(true);
       setIsCreating(false);
-      setIsSharing(false);
     }
   };
   
@@ -96,7 +92,6 @@ const ScheduleBuilderApp: React.FC = () => {
       setSelectedSchedule(schedule);
       setIsEditing(false);
       setIsCreating(false);
-      setIsSharing(false);
       
       // 更新 URL 参数
       if (typeof window !== 'undefined') {
@@ -112,7 +107,6 @@ const ScheduleBuilderApp: React.FC = () => {
     setSelectedSchedule(null);
     setIsEditing(false);
     setIsCreating(false);
-    setIsSharing(false);
     
     // 清除 URL 参数
     if (typeof window !== 'undefined') {
@@ -125,16 +119,11 @@ const ScheduleBuilderApp: React.FC = () => {
   // 处理分享日程
   const handleShareSchedule = () => {
     if (selectedSchedule) {
-      setIsSharing(true);
       setIsEditing(false);
       setIsCreating(false);
     }
   };
   
-  // 处理取消分享
-  const handleCancelShare = () => {
-    setIsSharing(false);
-  };
   
   // 获取当前视图的日程
   const visibleSchedules = getSchedulesForCurrentView();
@@ -158,16 +147,6 @@ const ScheduleBuilderApp: React.FC = () => {
           initialData={selectedSchedule}
           onSave={handleSaveSchedule}
           onCancel={handleCancelCreate}
-        />
-      );
-    }
-    
-    // 分享日程
-    if (isSharing && selectedSchedule) {
-      return (
-        <ScheduleShare
-          schedule={selectedSchedule}
-          onClose={handleCancelShare}
         />
       );
     }

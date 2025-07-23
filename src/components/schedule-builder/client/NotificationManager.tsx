@@ -9,7 +9,7 @@ interface NotificationManagerProps {
 }
 
 const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) => {
-  // 通知钩子
+  // Notification hook
   const { 
     isSupported, 
     permission, 
@@ -17,20 +17,20 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
     checkReminders 
   } = useNotification();
   
-  // 状态
+  // State
   const [showBanner, setShowBanner] = useState(false);
   
-  // 检查通知权限和服务工作器
+  // Check notification permission and service worker
   useEffect(() => {
     const checkPermissionAndWorker = async () => {
       if (isSupported) {
         if (permission === 'default') {
           setShowBanner(true);
         } else if (permission === 'granted') {
-          // 检查服务工作器是否已注册
+          // Check if service worker is already registered
           const isRegistered = await isServiceWorkerRegistered();
           if (!isRegistered) {
-            // 注册服务工作器
+            // Register service worker
             await registerNotificationWorker();
           }
           setShowBanner(false);
@@ -43,13 +43,13 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
     checkPermissionAndWorker();
   }, [isSupported, permission]);
   
-  // 定期检查提醒
+  // Periodically check reminders
   useEffect(() => {
     if (isSupported && permission === 'granted') {
-      // 立即检查一次
+      // Check immediately
       checkReminders(schedules);
       
-      // 设置定时器，每分钟检查一次
+      // Set timer to check every minute
       const intervalId = setInterval(() => {
         checkReminders(schedules);
       }, 60000);
@@ -60,22 +60,22 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
     }
   }, [isSupported, permission, schedules, checkReminders]);
   
-  // 请求通知权限
+  // Request notification permission
   const handleRequestPermission = async () => {
     const result = await requestPermission();
     if (result === 'granted') {
-      // 注册服务工作器
+      // Register service worker
       await registerNotificationWorker();
       setShowBanner(false);
     }
   };
   
-  // 关闭横幅
+  // Close banner
   const handleCloseBanner = () => {
     setShowBanner(false);
   };
   
-  // 如果不支持通知或不显示横幅，则不渲染任何内容
+  // Don't render anything if notifications aren't supported or banner shouldn't be shown
   if (!isSupported || !showBanner) {
     return null;
   }
@@ -99,7 +99,7 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
         marginBottom: '10px'
       }}>
         <h3 style={{ margin: 0, color: '#2c3e50' }}>
-          启用通知
+          Enable Notifications
         </h3>
         <button
           onClick={handleCloseBanner}
@@ -110,14 +110,14 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
             cursor: 'pointer',
             color: '#666'
           }}
-          aria-label="关闭"
+          aria-label="Close"
         >
           ×
         </button>
       </div>
       
       <p style={{ margin: '0 0 15px 0', color: '#666' }}>
-        启用通知以接收日程提醒，确保您不会错过重要的活动或会议。
+        Enable notifications to receive schedule reminders and ensure you don't miss important events or meetings.
       </p>
       
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -132,7 +132,7 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ schedules }) 
             cursor: 'pointer'
           }}
         >
-          启用通知
+          Enable Notifications
         </button>
       </div>
       

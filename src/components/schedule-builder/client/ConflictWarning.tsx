@@ -23,11 +23,11 @@ const ConflictWarning: React.FC<ConflictWarningProps> = ({
       marginBottom: '20px'
     }}>
       <h3 style={{ color: '#E65100', marginTop: 0, marginBottom: '10px' }}>
-        时间冲突警告
+        Time Conflict Warning
       </h3>
       
       <p style={{ marginBottom: '15px' }}>
-        您创建的日程与以下现有日程时间冲突：
+        The schedule you created conflicts with the following existing schedules:
       </p>
       
       <ul style={{ 
@@ -52,7 +52,7 @@ const ConflictWarning: React.FC<ConflictWarningProps> = ({
       </ul>
       
       <p style={{ marginBottom: '15px' }}>
-        您可以选择调整时间以避免冲突，或者忽略此警告继续创建。
+        You can choose to adjust the time to avoid conflicts, or ignore this warning and continue.
       </p>
       
       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
@@ -67,7 +67,7 @@ const ConflictWarning: React.FC<ConflictWarningProps> = ({
             cursor: 'pointer'
           }}
         >
-          忽略并继续
+          Ignore and Continue
         </button>
         <button 
           onClick={onAdjust}
@@ -80,7 +80,7 @@ const ConflictWarning: React.FC<ConflictWarningProps> = ({
             cursor: 'pointer'
           }}
         >
-          调整时间
+          Adjust Time
         </button>
       </div>
     </div>
