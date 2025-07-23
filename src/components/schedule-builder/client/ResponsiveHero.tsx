@@ -30,7 +30,7 @@ const ResponsiveHero: React.FC = () => {
             color: '#2c3e50',
             textAlign: isMobile ? 'center' : 'left'
           }}>
-            日程安排构建器
+            Schedule Builder
           </h1>
           <p style={{ 
             fontSize: isMobile ? '1rem' : '1.1rem', 
@@ -38,7 +38,7 @@ const ResponsiveHero: React.FC = () => {
             color: '#666',
             textAlign: isMobile ? 'center' : 'left'
           }}>
-            创建、管理和分享您的日程安排。使用多种视图查看您的日程，设置提醒，与他人协作。简单、高效、免费使用！
+            Create, manage, and share your schedules. View your events in multiple formats, set reminders, and collaborate with others. Simple, efficient, and free to use!
           </p>
           <div style={{
             display: 'flex',
@@ -57,7 +57,7 @@ const ResponsiveHero: React.FC = () => {
               boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
               transition: 'all 0.3s ease'
             }}>
-              创建日程
+              Create Schedule
             </button>
             <button style={{
               backgroundColor: 'transparent',
@@ -69,7 +69,7 @@ const ResponsiveHero: React.FC = () => {
               cursor: 'pointer',
               transition: 'all 0.3s ease'
             }}>
-              查看示例
+              View Examples
             </button>
           </div>
         </Column>
@@ -92,23 +92,23 @@ const ResponsiveHero: React.FC = () => {
               paddingBottom: '10px'
             }}>
               <div>
-                <h3 style={{ margin: 0, color: '#2c3e50' }}>7月 2025</h3>
+                <h3 style={{ margin: 0, color: '#2c3e50' }}>July 2025</h3>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>日</button>
-                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontWeight: 'bold', borderBottom: '2px solid #4CAF50' }}>周</button>
-                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>月</button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>Day</button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666', fontWeight: 'bold', borderBottom: '2px solid #4CAF50' }}>Week</button>
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>Month</button>
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', borderBottom: '1px solid #eee', paddingBottom: '5px', marginBottom: '10px' }}>
-                <div style={{ width: '60px', textAlign: 'center', color: '#999' }}>时间</div>
+                <div style={{ width: '60px', textAlign: 'center', color: '#999' }}>Time</div>
                 <div style={{ flex: 1, display: 'flex' }}>
-                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>周一</div>
-                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>周二</div>
-                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>周三</div>
-                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>周四</div>
-                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>周五</div>
+                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>Mon</div>
+                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>Tue</div>
+                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>Wed</div>
+                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>Thu</div>
+                  <div style={{ flex: 1, textAlign: 'center', fontWeight: 'bold', color: '#666' }}>Fri</div>
                 </div>
               </div>
               
@@ -119,7 +119,7 @@ const ResponsiveHero: React.FC = () => {
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1, backgroundColor: '#E3F2FD', borderLeft: '3px solid #2196F3', borderRadius: '3px', padding: '2px 5px', fontSize: '0.8rem' }}>
-                    团队会议
+                    Team Meeting
                   </div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>
@@ -130,13 +130,13 @@ const ResponsiveHero: React.FC = () => {
                 <div style={{ width: '60px', textAlign: 'center', color: '#999' }}>10:00</div>
                 <div style={{ flex: 1, display: 'flex', height: '100%' }}>
                   <div style={{ flex: 1, backgroundColor: '#E8F5E9', borderLeft: '3px solid #4CAF50', borderRadius: '3px', padding: '2px 5px', fontSize: '0.8rem' }}>
-                    客户电话
+                    Client Call
                   </div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1, backgroundColor: '#FFF3E0', borderLeft: '3px solid #FF9800', borderRadius: '3px', padding: '2px 5px', fontSize: '0.8rem' }}>
-                    项目评审
+                    Project Review
                   </div>
                 </div>
               </div>
@@ -148,7 +148,7 @@ const ResponsiveHero: React.FC = () => {
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1, backgroundColor: '#F3E5F5', borderLeft: '3px solid #9C27B0', borderRadius: '3px', padding: '2px 5px', fontSize: '0.8rem' }}>
-                    午餐会议
+                    Lunch Meeting
                   </div>
                   <div style={{ flex: 1 }}></div>
                 </div>
@@ -159,7 +159,7 @@ const ResponsiveHero: React.FC = () => {
                 <div style={{ flex: 1, display: 'flex', height: '100%' }}>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1, backgroundColor: '#FFEBEE', borderLeft: '3px solid #F44336', borderRadius: '3px', padding: '2px 5px', fontSize: '0.8rem' }}>
-                    截止日期
+                    Deadline
                   </div>
                   <div style={{ flex: 1 }}></div>
                   <div style={{ flex: 1 }}></div>

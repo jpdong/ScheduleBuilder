@@ -7,7 +7,7 @@ const Footer: React.FC = () => (
       <div className="row">
         <div className="col col-4">
           <h3>Schedule Builder</h3>
-          <p>Generate random letters with customizable options for games, teaching, creative projects, and more. Simple, fast, and free to use!</p>
+          <p>Create, manage, and share your schedules.</p>
         </div>
         <div className="col col-4">
           <h3>Products</h3>
