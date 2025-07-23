@@ -24,7 +24,7 @@ const Footer: React.FC = () => (
         </div>
       </div>
       <div className="footer-bottom">
-        &copy; 2025 Random Letter. All rights reserved.
+        &copy; 2025 Schedule Builder. All rights reserved.
       </div>
     </div>
   </footer>
