@@ -31,19 +31,19 @@ const SharedScheduleView: React.FC<SharedScheduleViewProps> = ({ shareId }) => {
         // 检查是否过期
         if (foundSchedule.shareSettings?.expiresAt && 
             foundSchedule.shareSettings.expiresAt < new Date()) {
-          setError('此分享链接已过期。');
+          setError('This shared link has expired.');
           setSharedSchedule(null);
         } else {
           setSharedSchedule(foundSchedule);
           setError(null);
         }
       } else {
-        setError('找不到此分享日程，或者分享已被取消。');
+        setError('This shared schedule cannot be found or has been canceled.');
         setSharedSchedule(null);
       }
     } catch (err) {
       console.error('Error finding shared schedule:', err);
-      setError('加载分享日程时出错。');
+      setError('Error loading shared schedule.');
       setSharedSchedule(null);
     } finally {
       setLoading(false);
@@ -54,22 +54,22 @@ const SharedScheduleView: React.FC<SharedScheduleViewProps> = ({ shareId }) => {
   const handleEdit = () => {
     // 检查权限
     if (sharedSchedule?.shareSettings?.permission !== 'edit') {
-      alert('您没有编辑此日程的权限。');
+      alert('You do not have permission to edit this schedule.');
       return;
     }
     
     // 在实际应用中，这里应该打开编辑表单
-    alert('编辑功能在共享视图中尚未实现。');
+    alert('Editing functionality is not yet implemented in shared view.');
   };
   
   // 处理删除（在共享视图中禁用）
   const handleDelete = () => {
-    alert('您不能删除共享的日程。');
+    alert('You cannot delete a shared schedule.');
   };
   
   // 处理分享（在共享视图中禁用）
   const handleShare = () => {
-    alert('您不能重新分享此日程。');
+    alert('You cannot reshare this schedule.');
   };
   
   // 处理返回
@@ -89,7 +89,7 @@ const SharedScheduleView: React.FC<SharedScheduleViewProps> = ({ shareId }) => {
       }}>
         <div style={{ textAlign: 'center', color: '#666' }}>
           <div style={{ fontSize: '2rem', marginBottom: '10px' }}>⏳</div>
-          <div>正在加载分享的日程...</div>
+          <div>Loading shared schedule...</div>
         </div>
       </div>
     );

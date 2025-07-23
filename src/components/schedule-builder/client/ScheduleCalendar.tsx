@@ -93,8 +93,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
       <div className="day-view" style={{ marginTop: '20px' }}>
         {visibleSchedules.length === 0 ? (
           <EmptyState
-            title="今日无日程安排"
-            description="这一天没有安排任何日程。点击'创建新日程'按钮添加日程。"
+            title="No Events Today"
+            description="There are no scheduled events for this day. Click 'Create New Event' button to add an event."
             icon="📅"
           />
         ) : (
@@ -192,7 +192,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                 color: day.toDateString() === new Date().toDateString() ? '#4CAF50' : '#2c3e50'
               }}
             >
-              <div>{['日', '一', '二', '三', '四', '五', '六'][day.getDay()]}</div>
+              <div>{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]}</div>
               <div>{day.getDate()}</div>
             </div>
           ))}
@@ -313,7 +313,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
           borderBottom: '1px solid #ddd',
           marginBottom: '10px'
         }}>
-          {['日', '一', '二', '三', '四', '五', '六'].map((day, index) => (
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
             <div
               key={index}
               style={{
@@ -416,7 +416,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                           color: '#666',
                           textAlign: 'center'
                         }}>
-                          +{daySchedules.length - 3} 更多
+                          +{daySchedules.length - 3} more
                         </div>
                       )}
                     </div>
@@ -465,26 +465,240 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     onDateChange(new Date());
   };
 
-  // 获取当前视图的标题
+  // Get current view title
   const getViewTitle = () => {
     if (view === 'day') {
-      return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     } else if (view === 'week') {
       const weekStart = getWeekStart(date);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
-
-      const startMonth = weekStart.getMonth() + 1;
-      const endMonth = weekEnd.getMonth() + 1;
-
+      
+      const startMonth = weekStart.toLocaleDateString('en-US', { month: 'short' });
+      const endMonth = weekEnd.toLocaleDateString('en-US', { month: 'short' });
+      
       if (startMonth === endMonth) {
-        return `${weekStart.getFullYear()}年${startMonth}月${weekStart.getDate()}日 - ${weekEnd.getDate()}日`;
+        return `${startMonth} ${weekStart.getDate()} - ${weekEnd.getDate()}, ${weekStart.getFullYear()}`;
       } else {
-        return `${weekStart.getFullYear()}年${startMonth}月${weekStart.getDate()}日 - ${endMonth}月${weekEnd.getDate()}日`;
+        return `${startMonth} ${weekStart.getDate()} - ${endMonth} ${weekEnd.getDate()}, ${weekStart.getFullYear()}`;
       }
     } else {
-      return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
     }
+  };
+  
+  // Export calendar as image
+  const exportAsImage = () => {
+    const calendarElement = document.querySelector('.calendar-content');
+    if (!calendarElement) return;
+    
+    // Create a modal container
+    const modalContainer = document.createElement('div');
+    modalContainer.style.position = 'fixed';
+    modalContainer.style.top = '0';
+    modalContainer.style.left = '0';
+    modalContainer.style.width = '100%';
+    modalContainer.style.height = '100%';
+    modalContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    modalContainer.style.display = 'flex';
+    modalContainer.style.justifyContent = 'center';
+    modalContainer.style.alignItems = 'center';
+    modalContainer.style.zIndex = '9999';
+    modalContainer.style.padding = '20px';
+    
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = 'white';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.padding = '20px';
+    modalContent.style.maxWidth = '90%';
+    modalContent.style.maxHeight = '90%';
+    modalContent.style.overflow = 'auto';
+    modalContent.style.display = 'flex';
+    modalContent.style.flexDirection = 'column';
+    modalContent.style.alignItems = 'center';
+    modalContent.style.gap = '15px';
+    
+    // Create loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.textContent = 'Generating image...';
+    loadingIndicator.style.padding = '20px';
+    modalContent.appendChild(loadingIndicator);
+    
+    // Add modal to document
+    modalContainer.appendChild(modalContent);
+    document.body.appendChild(modalContainer);
+    
+    // Close modal when clicking outside
+    modalContainer.addEventListener('click', (e) => {
+      if (e.target === modalContainer) {
+        document.body.removeChild(modalContainer);
+      }
+    });
+    
+    // Use html2canvas to generate image
+    try {
+      // @ts-ignore - html2canvas is loaded externally
+      const html2canvas = window.html2canvas || (window as any).html2canvas;
+      if (html2canvas) {
+        html2canvas(calendarElement).then((canvas: HTMLCanvasElement) => {
+          // Remove loading indicator
+          modalContent.removeChild(loadingIndicator);
+          
+          // Convert canvas to image data URL
+          const dataUrl = canvas.toDataURL('image/png');
+          
+          // Create title
+          const title = document.createElement('h3');
+          title.textContent = `Schedule - ${getViewTitle()}`;
+          title.style.margin = '0 0 10px 0';
+          modalContent.appendChild(title);
+          
+          // Create image element
+          const img = document.createElement('img');
+          img.src = dataUrl;
+          img.style.maxWidth = '100%';
+          img.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+          modalContent.appendChild(img);
+          
+          // Create download button
+          const downloadBtn = document.createElement('button');
+          downloadBtn.textContent = 'Download Image';
+          downloadBtn.style.padding = '10px 20px';
+          downloadBtn.style.backgroundColor = '#4CAF50';
+          downloadBtn.style.color = 'white';
+          downloadBtn.style.border = 'none';
+          downloadBtn.style.borderRadius = '4px';
+          downloadBtn.style.cursor = 'pointer';
+          downloadBtn.style.marginTop = '10px';
+          
+          downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = `schedule-${view}-${formatDate(date).replace(/-/g, '')}.png`;
+            link.href = dataUrl;
+            link.click();
+          });
+          
+          modalContent.appendChild(downloadBtn);
+          
+          // Create close button
+          const closeBtn = document.createElement('button');
+          closeBtn.textContent = 'Close';
+          closeBtn.style.padding = '10px 20px';
+          closeBtn.style.backgroundColor = '#f1f1f1';
+          closeBtn.style.color = '#333';
+          closeBtn.style.border = '1px solid #ddd';
+          closeBtn.style.borderRadius = '4px';
+          closeBtn.style.cursor = 'pointer';
+          closeBtn.style.marginTop = '5px';
+          
+          closeBtn.addEventListener('click', () => {
+            document.body.removeChild(modalContainer);
+          });
+          
+          modalContent.appendChild(closeBtn);
+        }).catch((error: Error) => {
+          console.error('Error exporting calendar as image:', error);
+          modalContent.innerHTML = '<p style="color: #D32F2F;">Failed to generate image. Please try again.</p>';
+          
+          // Add close button
+          const closeBtn = document.createElement('button');
+          closeBtn.textContent = 'Close';
+          closeBtn.style.padding = '10px 20px';
+          closeBtn.style.backgroundColor = '#f1f1f1';
+          closeBtn.style.color = '#333';
+          closeBtn.style.border = '1px solid #ddd';
+          closeBtn.style.borderRadius = '4px';
+          closeBtn.style.cursor = 'pointer';
+          closeBtn.style.marginTop = '10px';
+          
+          closeBtn.addEventListener('click', () => {
+            document.body.removeChild(modalContainer);
+          });
+          
+          modalContent.appendChild(closeBtn);
+        });
+      } else {
+        modalContent.innerHTML = '<p style="color: #D32F2F;">Export functionality is not available. Please try again later.</p>';
+        
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Close';
+        closeBtn.style.padding = '10px 20px';
+        closeBtn.style.backgroundColor = '#f1f1f1';
+        closeBtn.style.color = '#333';
+        closeBtn.style.border = '1px solid #ddd';
+        closeBtn.style.borderRadius = '4px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.style.marginTop = '10px';
+        
+        closeBtn.addEventListener('click', () => {
+          document.body.removeChild(modalContainer);
+        });
+        
+        modalContent.appendChild(closeBtn);
+      }
+    } catch (error) {
+      console.error('Error in export function:', error);
+      modalContent.innerHTML = '<p style="color: #D32F2F;">An unexpected error occurred. Please try again.</p>';
+      
+      // Add close button
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Close';
+      closeBtn.style.padding = '10px 20px';
+      closeBtn.style.backgroundColor = '#f1f1f1';
+      closeBtn.style.color = '#333';
+      closeBtn.style.border = '1px solid #ddd';
+      closeBtn.style.borderRadius = '4px';
+      closeBtn.style.cursor = 'pointer';
+      closeBtn.style.marginTop = '10px';
+      
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modalContainer);
+      });
+      
+      modalContent.appendChild(closeBtn);
+    }
+  };
+  
+  // Print calendar
+  const printCalendar = () => {
+    const printContent = document.querySelector('.calendar-content');
+    if (!printContent) return;
+    
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to print the calendar.');
+      return;
+    }
+    
+    const title = getViewTitle();
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Schedule - ${title}</title>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            .print-header { text-align: center; margin-bottom: 20px; }
+            .print-content { margin: 0 auto; }
+          </style>
+        </head>
+        <body>
+          <div class="print-header">
+            <h1>Schedule - ${title}</h1>
+          </div>
+          <div class="print-content">
+            ${printContent.outerHTML}
+          </div>
+          <script>
+            window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); }
+          </script>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
   };
 
   return (
@@ -510,7 +724,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               cursor: 'pointer'
             }}
           >
-            上一{view === 'day' ? '天' : view === 'week' ? '周' : '月'}
+            Previous {view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month'}
           </button>
           <button
             onClick={navigateToday}
@@ -523,7 +737,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               color: '#4CAF50'
             }}
           >
-            今天
+            Today
           </button>
           <button
             onClick={navigateNext}
@@ -535,7 +749,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               cursor: 'pointer'
             }}
           >
-            下一{view === 'day' ? '天' : view === 'week' ? '周' : '月'}
+            Next {view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month'}
           </button>
         </div>
 
@@ -544,7 +758,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
           {getViewTitle()}
         </h2>
 
-        {/* 视图切换 */}
+        {/* View switching and export options */}
         <div style={{ display: 'flex', gap: '5px' }}>
           <button
             onClick={() => onViewChange('day')}
@@ -558,7 +772,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               color: view === 'day' ? '#4CAF50' : '#666'
             }}
           >
-            日
+            Day
           </button>
           <button
             onClick={() => onViewChange('week')}
@@ -572,7 +786,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               color: view === 'week' ? '#4CAF50' : '#666'
             }}
           >
-            周
+            Week
           </button>
           <button
             onClick={() => onViewChange('month')}
@@ -586,7 +800,43 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
               color: view === 'month' ? '#4CAF50' : '#666'
             }}
           >
-            月
+            Month
+          </button>
+          <button
+            onClick={exportAsImage}
+            title="Export as Image"
+            style={{
+              background: 'white',
+              border: '1px solid #ddd',
+              padding: '8px 15px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              color: '#666',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <span role="img" aria-label="Export">📷</span>
+            Export
+          </button>
+          <button
+            onClick={printCalendar}
+            title="Print Calendar"
+            style={{
+              background: 'white',
+              border: '1px solid #ddd',
+              padding: '8px 15px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              color: '#666',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <span role="img" aria-label="Print">🖨️</span>
+            Print
           </button>
         </div>
       </div>

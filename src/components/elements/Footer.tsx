@@ -6,7 +6,7 @@ const Footer: React.FC = () => (
     <div className="container">
       <div className="row">
         <div className="col col-4">
-          <h3>Random Letter Generator</h3>
+          <h3>Schedule Builder</h3>
           <p>Generate random letters with customizable options for games, teaching, creative projects, and more. Simple, fast, and free to use!</p>
         </div>
         <div className="col col-4">

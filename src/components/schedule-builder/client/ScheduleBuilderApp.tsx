@@ -85,7 +85,7 @@ const ScheduleBuilderApp: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to delete schedule:', error);
-      alert('删除日程失败，请重试。');
+      alert('Failed to delete schedule. Please try again.');
     }
   };
   
@@ -210,7 +210,7 @@ const ScheduleBuilderApp: React.FC = () => {
                 color: activeView === 'calendar' ? '#4CAF50' : '#666'
               }}
             >
-              日历视图
+              Calendar View
             </button>
             <button
               onClick={() => setActiveView('list')}
@@ -224,7 +224,7 @@ const ScheduleBuilderApp: React.FC = () => {
                 color: activeView === 'list' ? '#4CAF50' : '#666'
               }}
             >
-              列表视图
+              List View
             </button>
           </div>
           
@@ -242,16 +242,16 @@ const ScheduleBuilderApp: React.FC = () => {
               gap: '5px'
             }}
           >
-            <span style={{ fontSize: '1.2rem' }}>+</span> 创建新日程
+            <span style={{ fontSize: '1.2rem' }}>+</span> Create New Event
           </button>
         </div>
         
         {/* 日程内容 */}
         {schedules.length === 0 ? (
           <EmptyState
-            title="欢迎使用日程安排构建器"
-            description="您还没有创建任何日程。点击'创建新日程'按钮开始添加您的第一个日程安排。"
-            actionText="创建新日程"
+            title="Welcome to Schedule Builder"
+            description="You haven't created any events yet. Click the 'Create New Event' button to add your first schedule."
+            actionText="Create New Event"
             onAction={handleCreateSchedule}
             icon="📅"
           />

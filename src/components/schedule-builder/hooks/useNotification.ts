@@ -3,8 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Schedule, Reminder } from '../types';
 import { useSchedule } from '../context/ScheduleContext';
 
-interface NotificationOptions {
-  title: string;
+interface CustomNotificationOptions {
   body: string;
   icon?: string;
   badge?: string;
@@ -52,7 +51,7 @@ export const useNotification = () => {
   // 发送通知
   const sendNotification = useCallback((
     title: string,
-    options: NotificationOptions = {}
+    options: CustomNotificationOptions
   ): Notification | null => {
     if (!isSupported || permission !== 'granted') {
       return null;
@@ -89,11 +88,11 @@ export const useNotification = () => {
       return null;
     }
     
-    const title = `提醒：${schedule.title}`;
+    const title = `Reminder: ${schedule.title}`;
     const startTime = schedule.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const body = `您的日程 "${schedule.title}" 将于 ${startTime} 开始。`;
+    const body = `Your event "${schedule.title}" will start at ${startTime}.`;
     
-    const options: NotificationOptions = {
+    const options: CustomNotificationOptions = {
       body,
       icon: '/logo.png',
       badge: '/logo.png',
@@ -125,19 +124,15 @@ export const useNotification = () => {
     }
     
     const now = new Date();
-    let updatedSchedules = false;
     
     schedules.forEach(schedule => {
       schedule.reminders.forEach(reminder => {
         if (!reminder.triggered && reminder.time <= now && reminder.time >= new Date(now.getTime() - 60000)) {
           // 如果提醒时间在当前时间的前后1分钟内，且未触发过，则发送通知
           sendScheduleReminder(schedule, reminder);
-          updatedSchedules = true;
         }
       });
     });
-    
-    // 如果有更新，可以在这里执行其他操作
   }, [isSupported, permission, sendScheduleReminder]);
   
   // 取消所有通知
@@ -177,4 +172,4 @@ export const useNotification = () => {
     cancelAllNotifications,
     cancelScheduleNotifications
   };
-};
+}

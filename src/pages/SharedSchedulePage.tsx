@@ -15,15 +15,15 @@ const SharedSchedulePage: React.FC<SharedSchedulePageProps> = ({ shareId }) => {
       <NavBar />
       <div style={{ background: '#f7f9fb', minHeight: '100vh', padding: '40px 0' }}>
         <Container>
-          <h1 style={{ 
-            fontSize: '1.8rem', 
-            marginBottom: '30px', 
+          <h1 style={{
+            fontSize: '1.8rem',
+            marginBottom: '30px',
             color: '#2c3e50',
             textAlign: 'center'
           }}>
-            分享的日程
+            Shared Schedule
           </h1>
-          
+
           <ScheduleProvider>
             <SharedScheduleView shareId={shareId} />
           </ScheduleProvider>
