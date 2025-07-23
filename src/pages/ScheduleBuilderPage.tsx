@@ -33,17 +33,17 @@ const testimonials = [
   {
     avatar: '/avatars/alex.jpg',
     name: 'Alex',
-    text: 'This scheduling tool is fantastic! The interface is clean and intuitive, making it very convenient to use. I can now manage my time much better.',
+    text: 'This Schedule Builder tool is fantastic! The interface is clean and intuitive, making it very convenient to use. I can now manage my time much better.',
   },
   {
     avatar: '/avatars/linda.jpg',
     name: 'Linda',
-    text: 'The sharing feature is incredibly useful. I can easily coordinate meeting times with team members. The reminder function ensures I never miss important events.',
+    text: 'The Schedule Builder export feature is incredibly useful. I can easily coordinate meeting times with team members. The reminder function ensures I never miss important events.',
   },
   {
     avatar: '/avatars/sam.jpg',
     name: 'Sam',
-    text: 'As a busy student, this tool helps me schedule classes, study sessions, and social activities. The different view options allow me to flexibly review my schedule.',
+    text: 'As a busy student, this Schedule Builder tool helps me schedule classes, study sessions, and social activities. The different view options allow me to flexibly review my schedule.',
   },
   {
     avatar: '/avatars/emily.jpg',
@@ -99,7 +99,7 @@ const ScheduleBuilderPage: React.FC = () => {
         {/* FAQ Section */}
         <div style={{ background: '#fff', padding: '80px 0' }} id="faq">
           <Container>
-            <SectionTitle>Frequently Asked Questions</SectionTitle>
+            <SectionTitle>Frequently Asked Questions About Schedule Builder</SectionTitle>
             <div style={{ maxWidth: 800, margin: '0 auto' }}>
               {faqs.map(f => (
                 <div key={f.question} style={{ marginBottom: 30, padding: 20, background: '#f9f9f9', borderRadius: 10 }}>
@@ -114,7 +114,7 @@ const ScheduleBuilderPage: React.FC = () => {
         {/* Testimonials Section */}
         <div style={{ background: '#f9f9f9', padding: '80px 0' }} id="testimonials">
           <Container>
-            <SectionTitle>User Testimonials</SectionTitle>
+            <SectionTitle>User Testimonials with Schedule Builder</SectionTitle>
             <Row gutter={[30, 30]}>
               {testimonials.map(t => (
                 <Column xs={24} md={12} lg={6} key={t.name}>

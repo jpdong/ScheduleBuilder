@@ -5,16 +5,15 @@ import GoogleAnalytics from '../src/components/analytics/GoogleAnalytics'
 import CookieConsent from '../src/components/analytics/CookieConsent'
 
 export const metadata: Metadata = {
-  title: 'Schedule Builder - Free Online Calendar & Event Management Tool',
-  description: 'Create, manage, and share your schedules with our free online Schedule Builder. Multiple calendar views, reminders, and easy sharing. Perfect for personal, business, and team planning.',
+  title: 'Schedule Builder - Free Online Calendar',
+  description: 'Create, manage, and share your schedules with our free online Schedule Builder. Multiple calendar views, reminders. ',
   icons: {
     icon: '/logo.png',
   },
-  
+
   alternates: {
       canonical: `https://schedule-builder.net/`,
     },
-  keywords: 'schedule builder, calendar tool, event management, online scheduler, meeting planner, time management, schedule sharing, free calendar'
 }
 
 export default function RootLayout({
