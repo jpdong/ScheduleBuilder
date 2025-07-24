@@ -8,86 +8,9 @@ interface CalendarPageProps {
 }
 
 const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
-  const pageTitle = `${year} Calendar - Full Year Calendar with Month Views`;
-  const pageDescription = `View the complete ${year} calendar with month and year views. Print or export calendar images for planning and scheduling. Free online calendar tool.`;
-  const pageKeywords = `${year} calendar, yearly calendar, monthly calendar, printable calendar, calendar export, online calendar, free calendar`;
-
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": pageTitle,
-    "description": pageDescription,
-    "datePublished": `${year}-01-01`,
-    "inLanguage": "en-US",
-    "mainEntity": {
-      "@type": "Calendar",
-      "name": `${year} Calendar`,
-      "description": `Complete ${year} calendar with all months and dates`,
-      "startDate": `${year}-01-01`,
-      "endDate": `${year}-12-31`
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Calendar",
-          "item": `/calendar/${year}`
-        }
-      ]
-    }
-  };
-
+  
   return (
     <>
-      <Head>
-        {/* Primary Meta Tags */}
-        <title>{pageTitle}</title>
-        <meta name="title" content={pageTitle} />
-        <meta name="description" content={pageDescription} />
-        <meta name="keywords" content={pageKeywords} />
-        <meta name="author" content="Schedule Builder" />
-        <meta name="robots" content="index, follow" />
-        <meta name="language" content="English" />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`/calendar/${year}`} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:site_name" content="Schedule Builder" />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={`/calendar/${year}`} />
-        <meta property="twitter:title" content={pageTitle} />
-        <meta property="twitter:description" content={pageDescription} />
-
-        {/* Additional SEO Meta Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-
-        {/* Canonical URL */}
-        <link rel="canonical" href={`/calendar/${year}`} />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData)
-          }}
-        />
-      </Head>
-
       <main role="main">
         <NavBar/>
         {/* Page Header */}
@@ -104,7 +27,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
               fontSize: '2.5rem',
               fontWeight: 'bold'
             }}>
-              {year} Calendar
+              Calendar {year}
             </h1>
             <p style={{
               margin: 0,
@@ -167,7 +90,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
               marginBottom: '20px',
               textAlign: 'center'
             }}>
-              About This Calendar
+              About This Calendar {year}
             </h2>
 
             <div style={{
@@ -181,7 +104,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
                   Year View
                 </h3>
                 <p style={{ color: '#666', lineHeight: '1.6' }}>
-                  Get a complete overview of {year} with all 12 months displayed in an easy-to-read grid format.
+                  Get a complete overview of calendar {year} with all 12 months displayed in an easy-to-read grid format.
                   Click on any month to switch to detailed month view.
                 </p>
               </div>
@@ -191,7 +114,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
                   Month View
                 </h3>
                 <p style={{ color: '#666', lineHeight: '1.6' }}>
-                  View individual months in detail with a full calendar grid. Navigate between months
+                  View individual months in detail with a full calendar {year} grid. Navigate between months
                   and easily return to the year view.
                 </p>
               </div>
@@ -201,7 +124,7 @@ const CalendarPage: React.FC<CalendarPageProps> = ({ year = 2026 }) => {
                   Export & Print
                 </h3>
                 <p style={{ color: '#666', lineHeight: '1.6' }}>
-                  Export calendar views as high-quality images or print them directly.
+                  Export calendar {year} views as high-quality images or print them directly.
                   Perfect for offline planning and sharing.
                 </p>
               </div>

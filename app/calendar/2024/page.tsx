@@ -12,8 +12,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '2024 Calendar - Full Year Calendar with Month Views',
-    description: 'View the complete 2024 calendar with month and year views. Print or export calendar images for planning and scheduling.',
+    title: 'Calendar 2024 - Full Year Calendar with Month Views',
+    description: 'View the complete calendar 2024 with month and year views. Print or export calendar images for planning and scheduling.',
   },
   alternates: {
     canonical: '/calendar/2024',

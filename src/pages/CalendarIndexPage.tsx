@@ -11,95 +11,10 @@ interface CalendarIndexPageProps {
 const CalendarIndexPage: React.FC<CalendarIndexPageProps> = ({ 
   availableYears = [2024, 2025, 2026, 2027, 2028] 
 }) => {
-  const pageTitle = 'Calendar Archive - Browse Calendars by Year';
-  const pageDescription = 'Browse our collection of yearly calendars. View complete calendars with month and year views, export functionality, and print support for planning and scheduling.';
-  const pageKeywords = 'calendar archive, yearly calendars, calendar collection, printable calendars, calendar browser, online calendars';
   
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": pageTitle,
-    "description": pageDescription,
-    "inLanguage": "en-US",
-    "mainEntity": {
-      "@type": "ItemList",
-      "name": "Calendar Collection",
-      "description": "Collection of yearly calendars",
-      "itemListElement": availableYears.map((year, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "Calendar",
-          "name": `${year} Calendar`,
-          "description": `Complete ${year} calendar with all months and dates`,
-          "startDate": `${year}-01-01`,
-          "endDate": `${year}-12-31`,
-          "url": `/calendar/${year}`
-        }
-      }))
-    },
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Calendar",
-          "item": "/calendar"
-        }
-      ]
-    }
-  };
   
   return (
     <>
-      <Head>
-        {/* Primary Meta Tags */}
-        <title>{pageTitle}</title>
-        <meta name="title" content={pageTitle} />
-        <meta name="description" content={pageDescription} />
-        <meta name="keywords" content={pageKeywords} />
-        <meta name="author" content="Schedule Builder" />
-        <meta name="robots" content="index, follow" />
-        <meta name="language" content="English" />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="/calendar" />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:site_name" content="Schedule Builder" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="/calendar" />
-        <meta property="twitter:title" content={pageTitle} />
-        <meta property="twitter:description" content={pageDescription} />
-        
-        {/* Additional SEO Meta Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        
-        {/* Canonical URL */}
-        <link rel="canonical" href="/calendar" />
-        
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData)
-          }}
-        />
-      </Head>
-      
       <main role="main">
         <NavBar/>
         

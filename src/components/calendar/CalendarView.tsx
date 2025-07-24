@@ -69,7 +69,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   // Get current view title
   const getViewTitle = () => {
     if (viewMode === 'year') {
-      return `${year} Calendar`;
+      return `Calendar ${year}`;
     } else {
       const monthName = calendarData.months[selectedMonth].name;
       return `${monthName} ${year}`;
