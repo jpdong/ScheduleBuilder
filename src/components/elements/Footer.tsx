@@ -12,6 +12,7 @@ const Footer: React.FC = () => (
         <div className="col col-4">
           <h3>Products</h3>
           <ul>
+            <li><Link href="/calendar">Calendar</Link></li>
             <li><Link href="/contact">Contact Us</Link></li>
           </ul>
         </div>
