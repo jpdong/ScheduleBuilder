@@ -1,0 +1,267 @@
+/* Calendar Responsive Styles */
+
+.calendar-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.year-view .year-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.month-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.month-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.month-view {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e0e0e0;
+}
+
+.calendar-day {
+  background: white;
+  min-height: 60px;
+  padding: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.weekday-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.calendar-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .calendar-view {
+    padding: 15px;
+  }
+  
+  .year-view .year-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+  
+  .month-card {
+    padding: 12px;
+  }
+  
+  .month-view {
+    padding: 15px;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .calendar-view {
+    padding: 10px;
+  }
+  
+  .year-view .year-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .month-card {
+    padding: 10px;
+  }
+  
+  .month-view {
+    padding: 12px;
+  }
+  
+  .calendar-day {
+    min-height: 50px;
+    font-size: 0.9rem;
+  }
+  
+  .weekday-header {
+    padding: 8px;
+  }
+  
+  .calendar-controls {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .calendar-controls > div {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 480px) {
+  .calendar-view {
+    padding: 8px;
+  }
+  
+  .year-view .year-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .month-card {
+    padding: 8px;
+    min-height: 180px;
+  }
+  
+  .month-view {
+    padding: 10px;
+  }
+  
+  .calendar-day {
+    min-height: 40px;
+    font-size: 0.8rem;
+    padding: 4px;
+  }
+  
+  .weekday-header {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+  
+  .calendar-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .calendar-controls button {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .calendar-view h1 {
+    font-size: 1.5rem !important;
+    text-align: center;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .calendar-view {
+    max-width: none;
+    padding: 0;
+  }
+  
+  .calendar-controls {
+    display: none;
+  }
+  
+  .month-card:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .year-view .year-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+  
+  .calendar-day {
+    min-height: 40px;
+  }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1200px) {
+  .year-view .year-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+  }
+}
+
+/* Medium Desktop Styles */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  .year-view .year-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Small Desktop/Large Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .year-view .year-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .month-card {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  
+  .month-view {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+}
+
+/* Dark Mode Support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .calendar-view {
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  .month-card {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+  
+  .month-view {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+  
+  .calendar-day {
+    background: #2d2d2d;
+  }
+  
+  .weekday-header {
+    background: #404040;
+  }
+}
