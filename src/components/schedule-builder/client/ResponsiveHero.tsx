@@ -40,38 +40,7 @@ const ResponsiveHero: React.FC = () => {
           }}>
             Create, manage, and share your schedules. View your events in multiple formats, set reminders, and collaborate with others. Simple, efficient, and free to use!
           </p>
-          <div style={{
-            display: 'flex',
-            justifyContent: isMobile ? 'center' : 'flex-start',
-            gap: '15px',
-            marginBottom: '30px'
-          }}>
-            <button style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '5px',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-              transition: 'all 0.3s ease'
-            }}>
-              Create Schedule
-            </button>
-            <button style={{
-              backgroundColor: 'transparent',
-              color: '#4CAF50',
-              border: '1px solid #4CAF50',
-              padding: '12px 24px',
-              borderRadius: '5px',
-              fontSize: '1rem',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}>
-              View Examples
-            </button>
-          </div>
+        
         </Column>
         <Column xs={24} md={12}>
           <div style={{
