@@ -9,6 +9,7 @@ import {
   formatTime
 } from '../utils/dateUtils';
 import EmptyState from './EmptyState';
+import html2canvas from 'html2canvas';
 
 interface ScheduleCalendarProps {
   schedules: Schedule[];
@@ -489,6 +490,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
   
   // Export calendar as image
   const exportAsImage = () => {
+    console.log("Exporting calendar as image")
     const calendarElement = document.querySelector('.calendar-content');
     if (!calendarElement) return;
     
@@ -538,10 +540,9 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     
     // Use html2canvas to generate image
     try {
-      // @ts-ignore - html2canvas is loaded externally
-      const html2canvas = window.html2canvas || (window as any).html2canvas;
+      console.log("Using html2canvas to generate image");
       if (html2canvas) {
-        html2canvas(calendarElement).then((canvas: HTMLCanvasElement) => {
+        html2canvas(calendarElement as HTMLElement).then((canvas: HTMLCanvasElement) => {
           // Remove loading indicator
           modalContent.removeChild(loadingIndicator);
           
