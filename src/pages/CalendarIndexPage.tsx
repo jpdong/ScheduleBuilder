@@ -81,16 +81,6 @@ const CalendarIndexPage: React.FC<CalendarIndexPageProps> = ({
               
               <div>
                 <h3 style={{ color: '#4CAF50', fontSize: '1.3rem', marginBottom: '15px' }}>
-                  🌐 SEO Optimized
-                </h3>
-                <p style={{ color: '#666', lineHeight: '1.7' }}>
-                  Each calendar page is optimized for search engines with proper meta tags, 
-                  structured data, and semantic HTML for better discoverability.
-                </p>
-              </div>
-              
-              <div>
-                <h3 style={{ color: '#4CAF50', fontSize: '1.3rem', marginBottom: '15px' }}>
                   ♿ Accessible
                 </h3>
                 <p style={{ color: '#666', lineHeight: '1.7' }}>
