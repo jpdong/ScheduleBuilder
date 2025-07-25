@@ -6,22 +6,32 @@ import EmptyState from './EmptyState';
 
 interface ScheduleListProps {
   schedules: Schedule[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-  onView: (id: string) => void;
+  onScheduleClick: (id: string) => void;
+  onEditSchedule: (id: string) => void;
+  onDeleteSchedule: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onView?: (id: string) => void;
 }
 
-const ScheduleList: React.FC<ScheduleListProps> = ({ 
-  schedules, 
-  onEdit, 
-  onDelete, 
-  onView 
+const ScheduleList: React.FC<ScheduleListProps> = ({
+  schedules,
+  onScheduleClick,
+  onEditSchedule,
+  onDeleteSchedule,
+  onEdit,
+  onDelete,
+  onView
 }) => {
+  // Use new props if available, otherwise fall back to old props for backward compatibility
+  const handleScheduleClick = onScheduleClick || onView || (() => { });
+  const handleEdit = onEditSchedule || onEdit || (() => { });
+  const handleDelete = onDeleteSchedule || onDelete || (() => { });
   // Sort and filter state
   const [sortBy, setSortBy] = useState<'startTime' | 'title'>('startTime');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Handle sort change
   const handleSortChange = (field: 'startTime' | 'title') => {
     if (sortBy === field) {
@@ -33,28 +43,28 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
       setSortOrder('asc');
     }
   };
-  
+
   // Handle search change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-  
+
   // Filter and sort schedules
   const filteredAndSortedSchedules = useMemo(() => {
     // Filter
     let result = schedules;
     if (searchTerm) {
       const lowerSearchTerm = searchTerm.toLowerCase();
-      result = result.filter(schedule => 
+      result = result.filter(schedule =>
         schedule.title.toLowerCase().includes(lowerSearchTerm) ||
         schedule.description.toLowerCase().includes(lowerSearchTerm)
       );
     }
-    
+
     // Sort
     result = [...result].sort((a, b) => {
       if (sortBy === 'startTime') {
-        return sortOrder === 'asc' 
+        return sortOrder === 'asc'
           ? a.startTime.getTime() - b.startTime.getTime()
           : b.startTime.getTime() - a.startTime.getTime();
       } else {
@@ -63,23 +73,23 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
           : b.title.localeCompare(a.title);
       }
     });
-    
+
     return result;
   }, [schedules, searchTerm, sortBy, sortOrder]);
-  
+
   // Confirm delete
   const confirmDelete = (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to delete schedule "${title}"?`)) {
-      onDelete(id);
+      handleDelete(id);
     }
   };
-  
+
   return (
     <div className="schedule-list">
       {/* Search and sort controls */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '20px',
         flexWrap: 'wrap',
@@ -92,7 +102,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder="Search schedules..."
-            style={{ 
+            style={{
               width: '100%',
               padding: '8px 12px',
               borderRadius: '4px',
@@ -100,13 +110,13 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
             }}
           />
         </div>
-        
+
         {/* Sort controls */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <span>Sort by:</span>
           <button
             onClick={() => handleSortChange('startTime')}
-            style={{ 
+            style={{
               background: sortBy === 'startTime' ? '#E8F5E9' : 'white',
               border: '1px solid #ddd',
               padding: '6px 12px',
@@ -124,7 +134,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
           </button>
           <button
             onClick={() => handleSortChange('title')}
-            style={{ 
+            style={{
               background: sortBy === 'title' ? '#E8F5E9' : 'white',
               border: '1px solid #ddd',
               padding: '6px 12px',
@@ -142,13 +152,13 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
           </button>
         </div>
       </div>
-      
+
       {/* Schedule list */}
       {filteredAndSortedSchedules.length === 0 ? (
         <EmptyState
           title={searchTerm ? 'No matching schedules found' : 'No schedules yet'}
-          description={searchTerm 
-            ? 'Try using different search terms, or clear the search to see all schedules.' 
+          description={searchTerm
+            ? 'Try using different search terms, or clear the search to see all schedules.'
             : 'Click the "Create New Schedule" button to add your first schedule.'}
           actionText={searchTerm ? 'Clear Search' : undefined}
           onAction={searchTerm ? () => setSearchTerm('') : undefined}
@@ -157,9 +167,9 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {filteredAndSortedSchedules.map(schedule => (
-            <div 
+            <div
               key={schedule.id}
-              style={{ 
+              style={{
                 background: 'white',
                 borderRadius: '8px',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
@@ -169,28 +179,28 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
               }}
             >
               {/* 颜色标记 */}
-              <div style={{ 
-                height: '6px', 
-                background: schedule.color || '#4CAF50' 
+              <div style={{
+                height: '6px',
+                background: schedule.color || '#4CAF50'
               }} />
-              
+
               {/* 内容区域 */}
-              <div style={{ 
+              <div style={{
                 padding: '15px',
                 cursor: 'pointer'
               }}
-              onClick={() => onView(schedule.id)}
+                onClick={() => handleScheduleClick(schedule.id)}
               >
-                <h3 style={{ 
+                <h3 style={{
                   margin: '0 0 10px 0',
                   color: '#2c3e50',
                   fontSize: '1.1rem'
                 }}>
                   {schedule.title}
                 </h3>
-                
-                <div style={{ 
-                  display: 'flex', 
+
+                <div style={{
+                  display: 'flex',
                   alignItems: 'center',
                   color: '#666',
                   fontSize: '0.9rem',
@@ -201,9 +211,9 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                     {formatDateTime(schedule.startTime)} - {formatDateTime(schedule.endTime)}
                   </span>
                 </div>
-                
+
                 {schedule.description && (
-                  <p style={{ 
+                  <p style={{
                     margin: '0',
                     color: '#666',
                     fontSize: '0.9rem',
@@ -217,16 +227,16 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                   </p>
                 )}
               </div>
-              
+
               {/* 操作按钮 */}
-              <div style={{ 
+              <div style={{
                 display: 'flex',
                 borderTop: '1px solid #eee',
                 padding: '10px 15px'
               }}>
                 <button
-                  onClick={() => onView(schedule.id)}
-                  style={{ 
+                  onClick={() => handleScheduleClick(schedule.id)}
+                  style={{
                     flex: '1',
                     background: 'none',
                     border: 'none',
@@ -238,8 +248,8 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                   View
                 </button>
                 <button
-                  onClick={() => onEdit(schedule.id)}
-                  style={{ 
+                  onClick={() => handleEdit(schedule.id)}
+                  style={{
                     flex: '1',
                     background: 'none',
                     border: 'none',
@@ -252,7 +262,7 @@ const ScheduleList: React.FC<ScheduleListProps> = ({
                 </button>
                 <button
                   onClick={() => confirmDelete(schedule.id, schedule.title)}
-                  style={{ 
+                  style={{
                     flex: '1',
                     background: 'none',
                     border: 'none',

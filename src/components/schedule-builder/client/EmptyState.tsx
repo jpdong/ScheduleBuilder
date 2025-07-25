@@ -2,19 +2,21 @@
 import React from 'react';
 
 interface EmptyStateProps {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   actionText?: string;
   onAction?: () => void;
+  onCreateSchedule?: () => void;
   icon?: React.ReactNode;
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
-  title,
-  description,
+  title = "No schedules yet",
+  description = "Create your first schedule to get started",
   actionText,
   onAction,
-  icon
+  onCreateSchedule,
+  icon = "📅"
 }) => {
   return (
     <div style={{
@@ -42,22 +44,41 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         {description}
       </p>
       
-      {actionText && onAction && (
-        <button
-          onClick={onAction}
-          style={{
-            background: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          {actionText}
-        </button>
-      )}
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {actionText && onAction && (
+          <button
+            onClick={onAction}
+            style={{
+              background: '#2196F3',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            {actionText}
+          </button>
+        )}
+        
+        {onCreateSchedule && (
+          <button
+            onClick={onCreateSchedule}
+            style={{
+              background: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            + Create Schedule
+          </button>
+        )}
+      </div>
     </div>
   );
 };

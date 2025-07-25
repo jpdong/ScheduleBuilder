@@ -11,23 +11,35 @@ import ReminderSettings from './ReminderSettings';
 import NotificationPermission from './NotificationPermission';
 
 interface ScheduleCreatorProps {
+  schedule?: Schedule;
   initialData?: Schedule;
   onSave: (schedule: Schedule) => void;
   onCancel: () => void;
+  initialDate?: Date;
+  isEditing?: boolean;
 }
 
-const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, onCancel }) => {
+const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ 
+  schedule, 
+  initialData, 
+  onSave, 
+  onCancel, 
+  initialDate,
+  isEditing = false 
+}) => {
+  // Use schedule prop if provided, otherwise use initialData
+  const scheduleData = schedule || initialData;
   const { addSchedule, updateSchedule, checkConflict } = useSchedule();
   
   // Form state
   const [formData, setFormData] = useState<ScheduleFormData>({
-    title: initialData?.title || '',
-    description: initialData?.description || '',
-    startTime: initialData?.startTime || new Date(),
-    endTime: initialData?.endTime || new Date(Date.now() + 60 * 60 * 1000), // Default 1 hour later
-    color: initialData?.color || '#4CAF50',
-    reminders: initialData?.reminders.map(r => ({
-      time: Math.round((r.time.getTime() - initialData.startTime.getTime()) / (60 * 1000) * -1)
+    title: scheduleData?.title || '',
+    description: scheduleData?.description || '',
+    startTime: scheduleData?.startTime || initialDate || new Date(),
+    endTime: scheduleData?.endTime || new Date((initialDate || new Date()).getTime() + 60 * 60 * 1000), // Default 1 hour later
+    color: scheduleData?.color || '#4CAF50',
+    reminders: scheduleData?.reminders.map(r => ({
+      time: Math.round((r.time.getTime() - scheduleData.startTime.getTime()) / (60 * 1000) * -1)
     })) || [{ time: 15 }] // Default 15 minutes before
   });
   
@@ -63,7 +75,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
   // Check conflicts
   useEffect(() => {
     const scheduleToCheck = {
-      id: initialData?.id || 'new',
+      id: scheduleData?.id || 'new',
       startTime: formData.startTime,
       endTime: formData.endTime
     };
@@ -138,9 +150,9 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
       
       let savedSchedule: Schedule;
       
-      if (initialData) {
+      if (scheduleData) {
         // Update existing schedule
-        savedSchedule = await updateSchedule(initialData.id, {
+        savedSchedule = await updateSchedule(scheduleData.id, {
           title: formData.title,
           description: formData.description,
           startTime: formData.startTime,
@@ -186,7 +198,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
         margin: '0 auto'
       }}>
         <h2 style={{ marginBottom: '20px', color: '#2c3e50' }}>
-          {initialData ? 'Edit Schedule' : 'Create New Schedule'}
+          {scheduleData ? 'Edit Schedule' : 'Create New Schedule'}
         </h2>
         
         {errors.general && (
@@ -432,7 +444,7 @@ const ScheduleCreator: React.FC<ScheduleCreatorProps> = ({ initialData, onSave, 
               }}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Saving...' : (initialData ? 'Update' : 'Create')}
+              {isSubmitting ? 'Saving...' : (scheduleData ? 'Update' : 'Create')}
             </button>
           </div>
         </form>

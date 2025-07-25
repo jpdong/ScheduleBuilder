@@ -4,6 +4,9 @@
  * @returns 格式化后的日期字符串
  */
 export const formatDate = (date: Date): string => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    return new Date().toISOString().split('T')[0]; // Return current date as fallback
+  }
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -16,6 +19,12 @@ export const formatDate = (date: Date): string => {
  * @returns 格式化后的时间字符串
  */
 export const formatTime = (date: Date): string => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${hours}:${minutes}`;
@@ -27,6 +36,10 @@ export const formatTime = (date: Date): string => {
  * @returns 格式化后的日期时间字符串
  */
 export const formatDateTime = (date: Date): string => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    const now = new Date();
+    return `${formatDate(now)} ${formatTime(now)}`;
+  }
   return `${formatDate(date)} ${formatTime(date)}`;
 };
 
@@ -48,6 +61,9 @@ export const parseDateTime = (dateString: string, timeString: string): Date => {
  * @returns 一周的开始日期
  */
 export const getWeekStart = (date: Date): Date => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    date = new Date();
+  }
   const result = new Date(date);
   const day = result.getDay();
   const diff = result.getDate() - day + (day === 0 ? -6 : 1); // 调整为周一为一周的开始
@@ -62,6 +78,9 @@ export const getWeekStart = (date: Date): Date => {
  * @returns 一周的结束日期
  */
 export const getWeekEnd = (date: Date): Date => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    date = new Date();
+  }
   const result = new Date(date);
   const day = result.getDay();
   const diff = result.getDate() + (day === 0 ? 0 : 7 - day); // 调整为周日为一周的结束
@@ -76,6 +95,9 @@ export const getWeekEnd = (date: Date): Date => {
  * @returns 一个月的开始日期
  */
 export const getMonthStart = (date: Date): Date => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    date = new Date();
+  }
   return new Date(date.getFullYear(), date.getMonth(), 1);
 };
 
@@ -85,6 +107,9 @@ export const getMonthStart = (date: Date): Date => {
  * @returns 一个月的结束日期
  */
 export const getMonthEnd = (date: Date): Date => {
+  if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+    date = new Date();
+  }
   return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
 };
 
@@ -95,6 +120,12 @@ export const getMonthEnd = (date: Date): Date => {
  * @returns 天数
  */
 export const getDaysBetween = (start: Date, end: Date): number => {
+  if (!start || !(start instanceof Date) || isNaN(start.getTime())) {
+    start = new Date();
+  }
+  if (!end || !(end instanceof Date) || isNaN(end.getTime())) {
+    end = new Date();
+  }
   const oneDay = 24 * 60 * 60 * 1000; // 一天的毫秒数
   const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
   const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
@@ -124,6 +155,9 @@ export const getReminderOptions = (): { label: string; value: number }[] => {
  * @returns 提醒时间
  */
 export const calculateReminderTime = (scheduleTime: Date, minutesBefore: number): Date => {
+  if (!scheduleTime || !(scheduleTime instanceof Date) || isNaN(scheduleTime.getTime())) {
+    scheduleTime = new Date();
+  }
   const reminderTime = new Date(scheduleTime);
   reminderTime.setMinutes(reminderTime.getMinutes() - minutesBefore);
   return reminderTime;
