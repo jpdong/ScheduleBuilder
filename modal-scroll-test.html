@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal 滚动条测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .tall-content {
+            height: 200vh; /* 让页面足够高以产生滚动条 */
+            background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .open-modal-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            z-index: 999;
+        }
+        
+        .open-modal-btn:hover {
+            background: #0056b3;
+        }
+        
+        /* Modal 样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 4px;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: #f5f5f5;
+        }
+        
+        .modal-body {
+            padding: 24px;
+            overflow: auto;
+            flex: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* 防止滚动的样式 */
+        body.modal-open {
+            overflow: hidden;
+            padding-right: var(--scrollbar-width, 0);
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator">
+        滚动位置: <span id="scrollPosition">0</span>px
+    </div>
+    
+    <button class="open-modal-btn" onclick="openModal()">打开弹框</button>
+    
+    <div class="content">
+        <h1>Modal 滚动条测试页面</h1>
+        
+        <p>这个页面用来测试弹框打开时滚动条的行为。请注意以下几点：</p>
+        
+        <ul>
+            <li><strong>滚动条保持</strong>：弹框打开时，滚动条应该保持可见，页面不应该跳动</li>
+            <li><strong>背景不可滚动</strong>：弹框打开时，背景页面应该无法滚动</li>
+            <li><strong>位置保持</strong>：关闭弹框后，页面应该回到原来的滚动位置</li>
+        </ul>
+        
+        <h2>测试步骤</h2>
+        <ol>
+            <li>滚动页面到不同位置</li>
+            <li>点击右上角的"打开弹框"按钮</li>
+            <li>观察页面是否跳动，滚动条是否消失</li>
+            <li>尝试滚动背景页面（应该无法滚动）</li>
+            <li>关闭弹框，检查页面位置是否保持</li>
+        </ol>
+        
+        <div class="tall-content">
+            <h3>长内容区域</h3>
+            <p>这里是一个很高的内容区域，用来产生垂直滚动条。</p>
+            <p>你可以滚动到页面的不同位置，然后测试弹框的行为。</p>
+            
+            <div style="margin: 40px 0;">
+                <h4>更多内容</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            
+            <div style="margin: 40px 0;">
+                <h4>中间位置</h4>
+                <p>这里是页面的中间位置，你可以在这里打开弹框测试。</p>
+                <button class="btn btn-primary" onclick="openModal()">在此位置打开弹框</button>
+            </div>
+            
+            <div style="margin: 40px 0;">
+                <h4>更多测试内容</h4>
+                <p>继续添加更多内容来确保页面足够长...</p>
+                <p>这样我们就可以测试在不同滚动位置打开弹框的效果。</p>
+            </div>
+        </div>
+        
+        <h2>底部内容</h2>
+        <p>这里是页面底部的内容。如果你滚动到这里再打开弹框，应该能看到滚动条处理的效果。</p>
+        <button class="btn btn-primary" onclick="openModal()">在底部打开弹框</button>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">创建新日程</h2>
+                <button class="modal-close" onclick="closeModal()" aria-label="关闭弹框">×</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">标题 *</label>
+                        <input type="text" class="form-input" placeholder="输入日程标题" value="示例日程">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">描述</label>
+                        <textarea class="form-textarea" placeholder="输入日程描述">这是一个示例日程的描述内容。你可以在这里输入更多详细信息。</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">开始时间 *</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="date" class="form-input" style="flex: 1;" value="2024-01-15">
+                            <input type="time" class="form-input" style="width: 120px;" value="10:00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">结束时间 *</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="date" class="form-input" style="flex: 1;" value="2024-01-15">
+                            <input type="time" class="form-input" style="width: 120px;" value="11:00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                        <button type="submit" class="btn btn-primary" onclick="closeModal()">创建</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let originalScrollY = 0;
+        let scrollbarWidth = 0;
+        
+        // 计算滚动条宽度
+        function getScrollbarWidth() {
+            const outer = document.createElement('div');
+            outer.style.visibility = 'hidden';
+            outer.style.overflow = 'scroll';
+            outer.style.msOverflowStyle = 'scrollbar';
+            document.body.appendChild(outer);
+            
+            const inner = document.createElement('div');
+            outer.appendChild(inner);
+            
+            const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+            outer.parentNode.removeChild(outer);
+            
+            return scrollbarWidth;
+        }
+        
+        // 更新滚动位置显示
+        function updateScrollIndicator() {
+            document.getElementById('scrollPosition').textContent = Math.round(window.scrollY);
+        }
+        
+        // 打开弹框
+        function openModal() {
+            const modal = document.getElementById('modalOverlay');
+            const body = document.body;
+            
+            // 保存当前滚动位置
+            originalScrollY = window.scrollY;
+            
+            // 计算滚动条宽度
+            scrollbarWidth = getScrollbarWidth();
+            
+            // 设置 CSS 变量
+            document.documentElement.style.setProperty('--scrollbar-width', scrollbarWidth + 'px');
+            
+            // 添加类来防止滚动
+            body.classList.add('modal-open');
+            
+            // 显示弹框
+            modal.classList.add('active');
+            
+            console.log('弹框打开 - 滚动位置:', originalScrollY, '滚动条宽度:', scrollbarWidth);
+        }
+        
+        // 关闭弹框
+        function closeModal() {
+            const modal = document.getElementById('modalOverlay');
+            const body = document.body;
+            
+            // 移除防止滚动的类
+            body.classList.remove('modal-open');
+            
+            // 隐藏弹框
+            modal.classList.remove('active');
+            
+            // 恢复滚动位置
+            window.scrollTo(0, originalScrollY);
+            
+            console.log('弹框关闭 - 恢复滚动位置:', originalScrollY);
+        }
+        
+        // 点击遮罩关闭弹框
+        function closeModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+        
+        // ESC 键关闭弹框
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('modalOverlay');
+                if (modal.classList.contains('active')) {
+                    closeModal();
+                }
+            }
+        });
+        
+        // 监听滚动事件
+        window.addEventListener('scroll', updateScrollIndicator);
+        
+        // 初始化
+        updateScrollIndicator();
+        
+        // 页面加载完成后计算滚动条宽度
+        window.addEventListener('load', function() {
+            scrollbarWidth = getScrollbarWidth();
+            console.log('页面加载完成 - 滚动条宽度:', scrollbarWidth);
+        });
+    </script>
+</body>
+</html>

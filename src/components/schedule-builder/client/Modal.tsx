@@ -18,7 +18,7 @@ const Modal: React.FC<ModalProps> = ({
   size = 'medium',
   showCloseButton = true
 }) => {
-  // Handle escape key press
+  // Handle escape key press and body scroll
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isOpen) {
@@ -28,13 +28,33 @@ const Modal: React.FC<ModalProps> = ({
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when modal is open
+
+      // 获取滚动条宽度，防止页面跳动
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollY = window.scrollY;
+
+      // 添加样式来防止背景滚动
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+
+      // 设置样式防止滚动
       document.body.style.overflow = 'hidden';
+
+      // 如果有滚动条，补偿宽度防止布局跳动
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${(parseInt(originalPaddingRight) || 0) + scrollbarWidth}px`;
+      }
+
+      return () => {
+        document.removeEventListener('keydown', handleEscape);
+        // 恢复原始样式
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
@@ -106,7 +126,7 @@ const Modal: React.FC<ModalProps> = ({
           >
             {title}
           </h2>
-          
+
           {showCloseButton && (
             <button
               onClick={onClose}
