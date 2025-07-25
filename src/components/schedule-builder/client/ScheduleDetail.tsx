@@ -8,7 +8,8 @@ interface ScheduleDetailProps {
   onEdit: () => void;
   onDelete: () => void;
   onShare: () => void;
-  onBack: () => void;
+  onBack?: () => void;
+  onClose?: () => void;
 }
 
 const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
@@ -16,7 +17,8 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
   onEdit,
   onDelete,
   onShare,
-  onBack
+  onBack,
+  onClose
 }) => {
   // Confirm delete
   const confirmDelete = () => {
@@ -107,18 +109,34 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={onBack}
-              style={{
-                background: 'none',
-                border: '1px solid #ddd',
-                padding: '8px 15px',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Back
-            </button>
+            {onBack && (
+              <button
+                onClick={onBack}
+                style={{
+                  background: 'none',
+                  border: '1px solid #ddd',
+                  padding: '8px 15px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Back
+              </button>
+            )}
+            {onClose && (
+              <button
+                onClick={onClose}
+                style={{
+                  background: 'none',
+                  border: '1px solid #ddd',
+                  padding: '8px 15px',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            )}
             <button
               onClick={onEdit}
               style={{

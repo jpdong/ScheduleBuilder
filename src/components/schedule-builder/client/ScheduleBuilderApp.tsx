@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Schedule, ScheduleView } from '../types';
+import { Schedule } from '../types';
 import { useSchedule } from '../context/ScheduleContext';
 import ScheduleList from './ScheduleList';
 import ScheduleCalendar from './ScheduleCalendar';
@@ -8,92 +8,97 @@ import ScheduleCreator from './ScheduleCreator';
 import ScheduleDetail from './ScheduleDetail';
 import NotificationManager from './NotificationManager';
 import EmptyState from './EmptyState';
+import Modal from './Modal';
 
 const ScheduleBuilderApp: React.FC = () => {
-  // 使用日程上下文
-  const { 
-    schedules, 
-    selectedDate, 
-    currentView, 
-    setSelectedDate, 
+  // Use schedule context
+  const {
+    schedules,
+    selectedDate,
+    currentView,
+    setSelectedDate,
     setCurrentView,
     getSchedulesForCurrentView,
     deleteSchedule
   } = useSchedule();
-  
-  // 状态
+
+  // State
   const [activeView, setActiveView] = useState<'list' | 'calendar'>('calendar');
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  
-  // 从 URL 参数中获取日程 ID
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  // Get schedule ID from URL parameters
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const scheduleId = urlParams.get('scheduleId');
-      
+
       if (scheduleId) {
         const schedule = schedules.find(s => s.id === scheduleId);
         if (schedule) {
           setSelectedSchedule(schedule);
+          setIsDetailModalOpen(true);
         }
       }
     }
   }, [schedules]);
-  
-  // 处理创建日程
+
+  // Handle create schedule
   const handleCreateSchedule = () => {
-    setIsCreating(true);
     setSelectedSchedule(null);
-    setIsEditing(false);
+    setIsCreateModalOpen(true);
   };
-  
-  // 处理保存日程
+
+  // Handle save schedule
   const handleSaveSchedule = (schedule: Schedule) => {
-    setIsCreating(false);
-    setIsEditing(false);
+    setIsCreateModalOpen(false);
+    setIsEditModalOpen(false);
+    // Optionally show the created/updated schedule in detail modal
     setSelectedSchedule(schedule);
+    setIsDetailModalOpen(true);
   };
-  
-  // 处理取消创建/编辑
+
+  // Handle cancel create/edit
   const handleCancelCreate = () => {
-    setIsCreating(false);
-    setIsEditing(false);
+    setIsCreateModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedSchedule(null);
   };
-  
-  // 处理编辑日程
+
+  // Handle edit schedule
   const handleEditSchedule = (id: string) => {
     const schedule = schedules.find(s => s.id === id);
     if (schedule) {
       setSelectedSchedule(schedule);
-      setIsEditing(true);
-      setIsCreating(false);
+      setIsDetailModalOpen(false);
+      setIsEditModalOpen(true);
     }
   };
-  
-  // 处理删除日程
+
+  // Handle delete schedule
   const handleDeleteSchedule = async (id: string) => {
-    try {
-      await deleteSchedule(id);
-      if (selectedSchedule && selectedSchedule.id === id) {
+    if (window.confirm('Are you sure you want to delete this schedule?')) {
+      try {
+        await deleteSchedule(id);
+        setIsDetailModalOpen(false);
         setSelectedSchedule(null);
+      } catch (error) {
+        console.error('Failed to delete schedule:', error);
+        alert('Failed to delete schedule. Please try again.');
       }
-    } catch (error) {
-      console.error('Failed to delete schedule:', error);
-      alert('Failed to delete schedule. Please try again.');
     }
   };
-  
-  // 处理查看日程详情
+
+  // Handle view schedule details
   const handleViewSchedule = (id: string) => {
     const schedule = schedules.find(s => s.id === id);
     if (schedule) {
       setSelectedSchedule(schedule);
-      setIsEditing(false);
-      setIsCreating(false);
-      
-      // 更新 URL 参数
+      setIsDetailModalOpen(true);
+
+      // Update URL parameters
       if (typeof window !== 'undefined') {
         const url = new URL(window.location.href);
         url.searchParams.set('scheduleId', id);
@@ -101,76 +106,44 @@ const ScheduleBuilderApp: React.FC = () => {
       }
     }
   };
-  
-  // 处理返回列表/日历
-  const handleBackToList = () => {
+
+  // Handle close detail modal
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
     setSelectedSchedule(null);
-    setIsEditing(false);
-    setIsCreating(false);
-    
-    // 清除 URL 参数
+
+    // Clear URL parameters
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
       url.searchParams.delete('scheduleId');
       window.history.pushState({}, '', url);
     }
   };
-  
-  // 处理分享日程
-  const handleShareSchedule = () => {
-    if (selectedSchedule) {
-      setIsEditing(false);
-      setIsCreating(false);
-    }
+
+  // Handle edit from detail modal
+  const handleEditFromDetail = () => {
+    setIsDetailModalOpen(false);
+    setIsEditModalOpen(true);
   };
-  
-  
-  // 获取当前视图的日程
+
+  // Handle share schedule
+  const handleShareSchedule = () => {
+    // Share functionality can be implemented here
+    console.log('Share schedule:', selectedSchedule);
+  };
+
+
+  // Get schedules for current view
   const visibleSchedules = getSchedulesForCurrentView();
-  
-  // 渲染内容
+
+  // Render main content
   const renderContent = () => {
-    // 创建新日程
-    if (isCreating) {
-      return (
-        <ScheduleCreator
-          onSave={handleSaveSchedule}
-          onCancel={handleCancelCreate}
-        />
-      );
-    }
-    
-    // 编辑日程
-    if (isEditing && selectedSchedule) {
-      return (
-        <ScheduleCreator
-          initialData={selectedSchedule}
-          onSave={handleSaveSchedule}
-          onCancel={handleCancelCreate}
-        />
-      );
-    }
-    
-    // 查看日程详情
-    if (selectedSchedule) {
-      return (
-        <ScheduleDetail
-          schedule={selectedSchedule}
-          onEdit={() => setIsEditing(true)}
-          onDelete={() => handleDeleteSchedule(selectedSchedule.id)}
-          onShare={handleShareSchedule}
-          onBack={handleBackToList}
-        />
-      );
-    }
-    
-    // 日程列表或日历视图
     return (
-      <>
-        {/* 视图切换和创建按钮 */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+      <div style={{ padding: '20px' }}>
+        {/* Header with view toggle and create button */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '20px',
           flexWrap: 'wrap',
@@ -179,87 +152,131 @@ const ScheduleBuilderApp: React.FC = () => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
               onClick={() => setActiveView('calendar')}
-              style={{ 
-                background: activeView === 'calendar' ? '#E8F5E9' : 'white',
+              style={{
+                padding: '8px 16px',
                 border: '1px solid #ddd',
-                padding: '8px 15px',
                 borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: activeView === 'calendar' ? 'bold' : 'normal',
-                color: activeView === 'calendar' ? '#4CAF50' : '#666'
+                backgroundColor: activeView === 'calendar' ? '#007bff' : 'white',
+                color: activeView === 'calendar' ? 'white' : '#333',
+                cursor: 'pointer'
               }}
             >
               Calendar View
             </button>
             <button
               onClick={() => setActiveView('list')}
-              style={{ 
-                background: activeView === 'list' ? '#E8F5E9' : 'white',
+              style={{
+                padding: '8px 16px',
                 border: '1px solid #ddd',
-                padding: '8px 15px',
                 borderRadius: '4px',
-                cursor: 'pointer',
-                fontWeight: activeView === 'list' ? 'bold' : 'normal',
-                color: activeView === 'list' ? '#4CAF50' : '#666'
+                backgroundColor: activeView === 'list' ? '#007bff' : 'white',
+                color: activeView === 'list' ? 'white' : '#333',
+                cursor: 'pointer'
               }}
             >
               List View
             </button>
           </div>
-          
+
           <button
             onClick={handleCreateSchedule}
-            style={{ 
-              background: '#4CAF50',
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#28a745',
               color: 'white',
               border: 'none',
-              padding: '8px 15px',
               borderRadius: '4px',
               cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px'
+              fontSize: '14px',
+              fontWeight: 'bold'
             }}
           >
-            <span style={{ fontSize: '1.2rem' }}>+</span> Create New Event
+            + Create Schedule
           </button>
         </div>
-        
-        {/* 日程内容 */}
+
+        {/* Main content area */}
         {schedules.length === 0 ? (
-          <EmptyState
-            title="Welcome to Schedule Builder"
-            description="You haven't created any events yet. Click the 'Create New Event' button to add your first schedule."
-            actionText="Create New Event"
-            onAction={handleCreateSchedule}
-            icon="📅"
-          />
-        ) : activeView === 'calendar' ? (
-          <ScheduleCalendar
-            schedules={schedules}
-            view={currentView}
-            date={selectedDate}
-            onDateChange={setSelectedDate}
-            onViewChange={setCurrentView}
-            onScheduleClick={handleViewSchedule}
-          />
+          <EmptyState onCreateSchedule={handleCreateSchedule} />
         ) : (
-          <ScheduleList
-            schedules={visibleSchedules}
-            onEdit={handleEditSchedule}
-            onDelete={handleDeleteSchedule}
-            onView={handleViewSchedule}
-          />
+          <div>
+            {activeView === 'calendar' ? (
+              <ScheduleCalendar
+                schedules={visibleSchedules}
+                view={currentView}
+                date={selectedDate}
+                onDateChange={setSelectedDate}
+                onScheduleClick={handleViewSchedule}
+                onViewChange={setCurrentView}
+              />
+            ) : (
+              <ScheduleList
+                schedules={visibleSchedules}
+                onScheduleClick={handleViewSchedule}
+                onEditSchedule={handleEditSchedule}
+                onDeleteSchedule={handleDeleteSchedule}
+              />
+            )}
+          </div>
         )}
-      </>
+      </div>
     );
   };
-  
+
   return (
     <div className="schedule-builder-app">
       {/* 主内容 */}
       {renderContent()}
-      
+
+      {/* Create Schedule Modal */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={handleCancelCreate}
+        title="Create New Schedule"
+        size="large"
+      >
+        <ScheduleCreator
+          onSave={handleSaveSchedule}
+          onCancel={handleCancelCreate}
+          initialDate={selectedDate}
+        />
+      </Modal>
+
+      {/* Edit Schedule Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={handleCancelCreate}
+        title="Edit Schedule"
+        size="large"
+      >
+        {selectedSchedule && (
+          <ScheduleCreator
+            schedule={selectedSchedule}
+            onSave={handleSaveSchedule}
+            onCancel={handleCancelCreate}
+            isEditing={true}
+          />
+        )}
+      </Modal>
+
+      {/* Schedule Detail Modal */}
+      <Modal
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+        title="Schedule Details"
+        size="medium"
+      >
+        {selectedSchedule && (
+          <ScheduleDetail
+            schedule={selectedSchedule}
+            onEdit={handleEditFromDetail}
+            onDelete={() => handleDeleteSchedule(selectedSchedule.id)}
+            onShare={handleShareSchedule}
+            onClose={handleCloseDetailModal}
+          />
+        )}
+      </Modal>
+
       {/* 通知管理器 */}
       <NotificationManager schedules={schedules} />
     </div>
