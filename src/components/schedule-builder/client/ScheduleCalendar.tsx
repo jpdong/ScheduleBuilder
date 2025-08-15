@@ -91,7 +91,11 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     });
 
     return (
-      <div className="day-view" style={{ marginTop: '20px' }}>
+      <div className="day-view" style={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {visibleSchedules.length === 0 ? (
           <EmptyState
             title="No Events Today"
@@ -99,9 +103,15 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
             icon="📅"
           />
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '10px',
+            overflowY: 'auto',
+            flex: '1'
+          }}>
             {Array.from({ length: 24 }).map((_, hour) => (
-              <div key={hour} style={{ display: 'flex' }}>
+              <div key={hour} style={{ display: 'flex', flexShrink: 0 }}>
                 {/* 小时标签 */}
                 <div style={{
                   width: '60px',
@@ -174,12 +184,17 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     });
 
     return (
-      <div className="week-view" style={{ marginTop: '20px' }}>
+      <div className="week-view" style={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {/* 星期标题 */}
         <div style={{
           display: 'flex',
           borderBottom: '1px solid #ddd',
-          marginBottom: '10px'
+          marginBottom: '10px',
+          flexShrink: 0
         }}>
           <div style={{ width: '60px' }}></div>
           {days.map((day, index) => (
@@ -200,9 +215,15 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         </div>
 
         {/* 日程内容 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {Array.from({ length: 12 }).map((_, hour) => (
-            <div key={hour} style={{ display: 'flex' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '10px',
+          overflowY: 'auto',
+          flex: '1'
+        }}>
+          {Array.from({ length: 24 }).map((_, hour) => (
+            <div key={hour} style={{ display: 'flex', flexShrink: 0 }}>
               {/* 小时标签 */}
               <div style={{
                 width: '60px',
@@ -211,14 +232,14 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                 color: '#666',
                 fontSize: '0.9rem'
               }}>
-                {hour + 8}:00
+                {hour}:00
               </div>
 
               {/* 每天的日程 */}
               {days.map((day, dayIndex) => {
                 const dayStr = formatDate(day);
                 const hourSchedules = dayGroups[dayStr].filter(
-                  s => s.startTime.getHours() === hour + 8
+                  s => s.startTime.getHours() === hour
                 );
 
                 return (
@@ -307,12 +328,18 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     });
 
     return (
-      <div className="month-view" style={{ marginTop: '20px' }}>
+      <div className="month-view" style={{ 
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         {/* 星期标题 */}
         <div style={{
           display: 'flex',
           borderBottom: '1px solid #ddd',
-          marginBottom: '10px'
+          marginBottom: '10px',
+          flexShrink: 0
         }}>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
             <div
@@ -331,9 +358,20 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         </div>
 
         {/* 日期网格 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '5px',
+          flex: '1',
+          minHeight: 0
+        }}>
           {Array.from({ length: totalWeeks }).map((_, weekIndex) => (
-            <div key={weekIndex} style={{ display: 'flex', height: '120px', gap: '5px' }}>
+            <div key={weekIndex} style={{ 
+              display: 'flex', 
+              flex: '1',
+              gap: '5px',
+              minHeight: 0
+            }}>
               {Array.from({ length: 7 }).map((_, dayIndex) => {
                 const dayNumber = weekIndex * 7 + dayIndex;
                 // 确保 dayNumber 在 days 数组范围内
@@ -347,7 +385,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                         border: '1px solid #eee',
                         borderRadius: '4px',
                         padding: '5px',
-                        background: '#f9f9f9'
+                        background: '#f9f9f9',
+                        minHeight: 0
                       }}
                     ></div>
                   );
@@ -369,7 +408,10 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                       padding: '5px',
                       background: isToday ? '#E8F5E9' : isCurrentMonth ? 'white' : '#f9f9f9',
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      minHeight: 0
                     }}
                   >
                     {/* 日期标签 */}
@@ -377,7 +419,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                       textAlign: 'right',
                       fontWeight: isToday ? 'bold' : 'normal',
                       color: isCurrentMonth ? (isToday ? '#4CAF50' : '#2c3e50') : '#bbb',
-                      marginBottom: '5px'
+                      marginBottom: '5px',
+                      flexShrink: 0
                     }}>
                       {currentDay ? currentDay.getDate() : ''}
                     </div>
@@ -388,7 +431,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                       flexDirection: 'column',
                       gap: '2px',
                       overflow: 'hidden',
-                      maxHeight: '80px'
+                      flex: '1',
+                      minHeight: 0
                     }}>
                       {daySchedules.slice(0, 3).map(schedule => (
                         <div
@@ -403,7 +447,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            flexShrink: 0
                           }}
                         >
                           {formatTime(schedule.startTime)} {schedule.title}
@@ -415,7 +460,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                         <div style={{
                           fontSize: '0.8rem',
                           color: '#666',
-                          textAlign: 'center'
+                          textAlign: 'center',
+                          flexShrink: 0
                         }}>
                           +{daySchedules.length - 3} more
                         </div>
@@ -703,7 +749,12 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
   };
 
   return (
-    <div className="schedule-calendar">
+    <div className="schedule-calendar" style={{
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }}>
       {/* 日历头部 */}
       <div style={{
         display: 'flex',
@@ -711,7 +762,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         alignItems: 'center',
         marginBottom: '20px',
         flexWrap: 'wrap',
-        gap: '10px'
+        gap: '10px',
+        flexShrink: 0
       }}>
         {/* 导航按钮 */}
         <div style={{ display: 'flex', gap: '10px' }}>
@@ -843,7 +895,12 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
       </div>
 
       {/* 日历内容 */}
-      <div className="calendar-content">
+      <div className="calendar-content" style={{
+        flex: '1',
+        overflow: view === 'month' ? 'hidden' : 'auto',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {view === 'day' && renderDayView()}
         {view === 'week' && renderWeekView()}
         {view === 'month' && renderMonthView()}
