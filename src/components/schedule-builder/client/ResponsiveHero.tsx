@@ -19,6 +19,13 @@ const ResponsiveHero: React.FC = () => {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
+
+  const scrollToApp = () => {
+    const appSection = document.getElementById('app');
+    if (appSection) {
+      appSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   return (
     <Container>
@@ -40,7 +47,42 @@ const ResponsiveHero: React.FC = () => {
           }}>
             Create, manage, and share your schedules. View your events in multiple formats, set reminders, and collaborate with others. Simple, efficient, and free to use!
           </p>
-        
+          <div style={{ 
+            textAlign: isMobile ? 'center' : 'left'
+          }}>
+            <button
+              onClick={scrollToApp}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '15px 30px',
+                fontSize: '1.1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
+                transition: 'all 0.3s ease',
+                ':hover': {
+                  backgroundColor: '#45a049',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 20px rgba(76, 175, 80, 0.4)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#45a049';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(76, 175, 80, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(76, 175, 80, 0.3)';
+              }}
+            >
+              Try Schedule Builder
+            </button>
+          </div>
         </Column>
         <Column xs={24} md={12}>
           <div style={{
