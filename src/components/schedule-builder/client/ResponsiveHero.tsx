@@ -62,12 +62,7 @@ const ResponsiveHero: React.FC = () => {
                 fontWeight: 'bold',
                 cursor: 'pointer',
                 boxShadow: '0 4px 15px rgba(76, 175, 80, 0.3)',
-                transition: 'all 0.3s ease',
-                ':hover': {
-                  backgroundColor: '#45a049',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 20px rgba(76, 175, 80, 0.4)'
-                }
+                transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#45a049';
