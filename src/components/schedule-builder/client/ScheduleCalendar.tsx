@@ -18,6 +18,7 @@ interface ScheduleCalendarProps {
   onDateChange: (date: Date) => void;
   onViewChange: (view: ScheduleView) => void;
   onScheduleClick: (id: string) => void;
+  onCreateSchedule?: (dateTime: Date) => void;
 }
 
 const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
@@ -26,7 +27,8 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
   date,
   onDateChange,
   onViewChange,
-  onScheduleClick
+  onScheduleClick,
+  onCreateSchedule
 }) => {
   // 根据视图和日期获取要显示的日程
   const visibleSchedules = useMemo(() => {
@@ -108,8 +110,13 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
             flexDirection: 'column', 
             gap: '10px',
             overflowY: 'auto',
-            flex: '1'
-          }}>
+            flex: '1',
+            // 隐藏滚动条但保持滚动功能
+            scrollbarWidth: 'none', /* Firefox */
+            msOverflowStyle: 'none' /* IE and Edge */
+          } as React.CSSProperties & { scrollbarWidth?: string; msOverflowStyle?: string }}
+          className="day-view-scroll"
+          >
             {Array.from({ length: 24 }).map((_, hour) => (
               <div key={hour} style={{ display: 'flex', flexShrink: 0 }}>
                 {/* 小时标签 */}
@@ -124,16 +131,36 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                 </div>
 
                 {/* 日程容器 */}
-                <div style={{
-                  flex: '1',
-                  minHeight: '60px',
-                  borderTop: '1px solid #eee',
-                  padding: '5px 0'
-                }}>
+                <div 
+                  style={{
+                    flex: '1',
+                    minHeight: '60px',
+                    borderTop: '1px solid #eee',
+                    padding: '5px 0',
+                    cursor: 'pointer',
+                    position: 'relative'
+                  }}
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget && onCreateSchedule) {
+                      const clickDateTime = new Date(date);
+                      clickDateTime.setHours(hour, 0, 0, 0);
+                      onCreateSchedule(clickDateTime);
+                    }
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f8f9fa';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
                   {hourGroups[hour].map(schedule => (
                     <div
                       key={schedule.id}
-                      onClick={() => onScheduleClick(schedule.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onScheduleClick(schedule.id);
+                      }}
                       style={{
                         background: schedule.color || '#4CAF50',
                         color: 'white',
@@ -192,11 +219,15 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         {/* 星期标题 */}
         <div style={{
           display: 'flex',
-          borderBottom: '1px solid #ddd',
-          marginBottom: '10px',
+          borderBottom: '1px solid #eee',
+          marginBottom: '0px', // 移除间距
           flexShrink: 0
         }}>
-          <div style={{ width: '60px' }}></div>
+          <div style={{ 
+            width: '60px',
+            borderBottom: '1px solid #eee', // 确保时间列也有下边框
+            background: '#fafafa'
+          }}></div>
           {days.map((day, index) => (
             <div
               key={index}
@@ -205,7 +236,9 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                 textAlign: 'center',
                 padding: '10px',
                 fontWeight: 'bold',
-                color: day.toDateString() === new Date().toDateString() ? '#4CAF50' : '#2c3e50'
+                color: day.toDateString() === new Date().toDateString() ? '#4CAF50' : '#2c3e50',
+                borderRight: index < 6 ? '1px solid #e0e0e0' : 'none',
+                borderBottom: '1px solid #eee' // 确保标题行有下边框
               }}
             >
               <div>{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]}</div>
@@ -218,10 +251,15 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         <div style={{ 
           display: 'flex', 
           flexDirection: 'column', 
-          gap: '10px',
+          gap: '0px', // 移除gap，让行紧密相连
           overflowY: 'auto',
-          flex: '1'
-        }}>
+          flex: '1',
+          // 隐藏滚动条但保持滚动功能
+          scrollbarWidth: 'none', /* Firefox */
+          msOverflowStyle: 'none' /* IE and Edge */
+        } as React.CSSProperties & { scrollbarWidth?: string; msOverflowStyle?: string }}
+        className="week-view-scroll"
+        >
           {Array.from({ length: 24 }).map((_, hour) => (
             <div key={hour} style={{ display: 'flex', flexShrink: 0 }}>
               {/* 小时标签 */}
@@ -230,7 +268,10 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                 padding: '10px',
                 textAlign: 'right',
                 color: '#666',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                borderTop: hour === 0 ? 'none' : '1px solid #eee',
+                background: '#fafafa',
+                marginTop: hour === 0 ? '0px' : '-1px' // 确保与右侧格子对齐
               }}>
                 {hour}:00
               </div>
@@ -248,15 +289,41 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                     style={{
                       flex: '1',
                       minHeight: '60px',
-                      borderTop: '1px solid #eee',
+                      borderTop: hour === 0 ? 'none' : '1px solid #eee',
+                      borderRight: dayIndex < 6 ? '1px solid #e0e0e0' : 'none',
                       padding: '5px',
-                      background: day.toDateString() === new Date().toDateString() ? '#f9f9f9' : 'transparent'
+                      background: day.toDateString() === new Date().toDateString() ? '#f9f9f9' : 'transparent',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      marginTop: hour === 0 ? '0px' : '-1px' // 第一行不需要重叠
+                    }}
+                    onClick={(e) => {
+                      if (e.target === e.currentTarget && onCreateSchedule) {
+                        const clickDateTime = new Date(day);
+                        clickDateTime.setHours(hour, 0, 0, 0);
+                        onCreateSchedule(clickDateTime);
+                      }
+                    }}
+                    onMouseEnter={(e) => {
+                      if (day.toDateString() !== new Date().toDateString()) {
+                        e.currentTarget.style.backgroundColor = '#f8f9fa';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (day.toDateString() !== new Date().toDateString()) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      } else {
+                        e.currentTarget.style.backgroundColor = '#f9f9f9';
+                      }
                     }}
                   >
                     {hourSchedules.map(schedule => (
                       <div
                         key={schedule.id}
-                        onClick={() => onScheduleClick(schedule.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onScheduleClick(schedule.id);
+                        }}
                         style={{
                           background: schedule.color || '#4CAF50',
                           color: 'white',
@@ -411,7 +478,30 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                       overflow: 'hidden',
                       display: 'flex',
                       flexDirection: 'column',
-                      minHeight: 0
+                      minHeight: 0,
+                      cursor: isCurrentMonth ? 'pointer' : 'default'
+                    }}
+                    onClick={(e) => {
+                      // Allow clicks on the cell or its date label, but not on schedule items
+                      const target = e.target as HTMLElement;
+                      const isScheduleItem = target.closest('[data-schedule-item="true"]');
+                      
+                      if (!isScheduleItem && onCreateSchedule && isCurrentMonth && currentDay) {
+                        e.stopPropagation();
+                        const clickDateTime = new Date(currentDay);
+                        clickDateTime.setHours(9, 0, 0, 0); // Default to 9 AM for month view
+                        onCreateSchedule(clickDateTime);
+                      }
+                    }}
+                    onMouseEnter={(e) => {
+                      if (isCurrentMonth && !isToday) {
+                        e.currentTarget.style.backgroundColor = '#f0f0f0';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (isCurrentMonth && !isToday) {
+                        e.currentTarget.style.backgroundColor = 'white';
+                      }
                     }}
                   >
                     {/* 日期标签 */}
@@ -437,7 +527,11 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
                       {daySchedules.slice(0, 3).map(schedule => (
                         <div
                           key={schedule.id}
-                          onClick={() => onScheduleClick(schedule.id)}
+                          data-schedule-item="true"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onScheduleClick(schedule.id);
+                          }}
                           style={{
                             background: schedule.color || '#4CAF50',
                             color: 'white',
@@ -457,12 +551,15 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
 
                       {/* 显示更多 */}
                       {daySchedules.length > 3 && (
-                        <div style={{
-                          fontSize: '0.8rem',
-                          color: '#666',
-                          textAlign: 'center',
-                          flexShrink: 0
-                        }}>
+                        <div 
+                          data-schedule-item="true"
+                          style={{
+                            fontSize: '0.8rem',
+                            color: '#666',
+                            textAlign: 'center',
+                            flexShrink: 0
+                          }}
+                        >
                           +{daySchedules.length - 3} more
                         </div>
                       )}
@@ -749,13 +846,20 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
   };
 
   return (
-    <div className="schedule-calendar" style={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }}>
-      {/* 日历头部 */}
+    <>
+      <style>{`
+        .week-view-scroll::-webkit-scrollbar,
+        .day-view-scroll::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+      <div className="schedule-calendar" style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
+        {/* 日历头部 */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -906,6 +1010,7 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
         {view === 'month' && renderMonthView()}
       </div>
     </div>
+    </>
   );
 };
 

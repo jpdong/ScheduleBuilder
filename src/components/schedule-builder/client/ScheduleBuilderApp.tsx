@@ -28,6 +28,7 @@ const ScheduleBuilderApp: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [initialDateTime, setInitialDateTime] = useState<Date | undefined>(undefined);
 
   // Get schedule ID from URL parameters
   useEffect(() => {
@@ -46,8 +47,12 @@ const ScheduleBuilderApp: React.FC = () => {
   }, [schedules]);
 
   // Handle create schedule
-  const handleCreateSchedule = () => {
+  const handleCreateSchedule = (dateTime?: Date) => {
     setSelectedSchedule(null);
+    setInitialDateTime(dateTime);
+    if (dateTime) {
+      setSelectedDate(dateTime);
+    }
     setIsCreateModalOpen(true);
   };
 
@@ -65,6 +70,7 @@ const ScheduleBuilderApp: React.FC = () => {
     setIsCreateModalOpen(false);
     setIsEditModalOpen(false);
     setSelectedSchedule(null);
+    setInitialDateTime(undefined);
   };
 
   // Handle edit schedule
@@ -186,7 +192,7 @@ const ScheduleBuilderApp: React.FC = () => {
           </div>
 
           <button
-            onClick={handleCreateSchedule}
+            onClick={() => handleCreateSchedule()}
             style={{
               padding: '10px 20px',
               backgroundColor: '#28a745',
@@ -210,7 +216,7 @@ const ScheduleBuilderApp: React.FC = () => {
           flexDirection: 'column'
         }}>
           {schedules.length === 0 ? (
-            <EmptyState onCreateSchedule={handleCreateSchedule} />
+            <EmptyState onCreateSchedule={() => handleCreateSchedule()} />
           ) : (
             <div style={{
               flex: '1',
@@ -224,6 +230,7 @@ const ScheduleBuilderApp: React.FC = () => {
                   onDateChange={setSelectedDate}
                   onScheduleClick={handleViewSchedule}
                   onViewChange={setCurrentView}
+                  onCreateSchedule={handleCreateSchedule}
                 />
               ) : (
                 <ScheduleList
@@ -247,7 +254,11 @@ const ScheduleBuilderApp: React.FC = () => {
         height: '90vh',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+        border: '1px solid #e5e7eb'
       }}
     >
       {/* 主内容 */}
@@ -263,7 +274,7 @@ const ScheduleBuilderApp: React.FC = () => {
         <ScheduleCreator
           onSave={handleSaveSchedule}
           onCancel={handleCancelCreate}
-          initialDate={selectedDate}
+          initialDate={initialDateTime || selectedDate}
         />
       </Modal>
 
