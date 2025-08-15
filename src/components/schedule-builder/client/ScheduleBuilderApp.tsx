@@ -139,7 +139,13 @@ const ScheduleBuilderApp: React.FC = () => {
   // Render main content
   const renderContent = () => {
     return (
-      <div style={{ padding: '20px' }}>
+      <div style={{ 
+        padding: '20px',
+        flex: '1',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         {/* Header with view toggle and create button */}
         <div style={{
           display: 'flex',
@@ -147,7 +153,8 @@ const ScheduleBuilderApp: React.FC = () => {
           alignItems: 'center',
           marginBottom: '20px',
           flexWrap: 'wrap',
-          gap: '10px'
+          gap: '10px',
+          flexShrink: 0
         }}>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
@@ -196,35 +203,53 @@ const ScheduleBuilderApp: React.FC = () => {
         </div>
 
         {/* Main content area */}
-        {schedules.length === 0 ? (
-          <EmptyState onCreateSchedule={handleCreateSchedule} />
-        ) : (
-          <div>
-            {activeView === 'calendar' ? (
-              <ScheduleCalendar
-                schedules={visibleSchedules}
-                view={currentView}
-                date={selectedDate}
-                onDateChange={setSelectedDate}
-                onScheduleClick={handleViewSchedule}
-                onViewChange={setCurrentView}
-              />
-            ) : (
-              <ScheduleList
-                schedules={visibleSchedules}
-                onScheduleClick={handleViewSchedule}
-                onEditSchedule={handleEditSchedule}
-                onDeleteSchedule={handleDeleteSchedule}
-              />
-            )}
-          </div>
-        )}
+        <div style={{ 
+          flex: '1',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          {schedules.length === 0 ? (
+            <EmptyState onCreateSchedule={handleCreateSchedule} />
+          ) : (
+            <div style={{
+              flex: '1',
+              overflow: 'hidden'
+            }}>
+              {activeView === 'calendar' ? (
+                <ScheduleCalendar
+                  schedules={visibleSchedules}
+                  view={currentView}
+                  date={selectedDate}
+                  onDateChange={setSelectedDate}
+                  onScheduleClick={handleViewSchedule}
+                  onViewChange={setCurrentView}
+                />
+              ) : (
+                <ScheduleList
+                  schedules={visibleSchedules}
+                  onScheduleClick={handleViewSchedule}
+                  onEditSchedule={handleEditSchedule}
+                  onDeleteSchedule={handleDeleteSchedule}
+                />
+              )}
+            </div>
+          )}
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="schedule-builder-app">
+    <div 
+      className="schedule-builder-app" 
+      style={{ 
+        height: '90vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}
+    >
       {/* 主内容 */}
       {renderContent()}
 
