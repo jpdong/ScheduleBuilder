@@ -771,8 +771,13 @@
     font-size: 12px;
   }
   
+  .apple-month-grid {
+    min-height: 400px;
+  }
+  
   .apple-month-date {
     padding: var(--spacing-xs);
+    min-height: 60px;
   }
   
   .apple-month-date-number {
@@ -1020,6 +1025,8 @@
   gap: 1px;
   background: var(--apple-gray-5);
   overflow: hidden;
+  min-height: 500px;
+  height: calc(100% - 60px);
 }
 
 .apple-month-date {
@@ -1031,6 +1038,7 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  height: 105px;
 }
 
 .apple-month-date:hover {
