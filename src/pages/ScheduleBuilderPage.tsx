@@ -7,8 +7,7 @@ import Container from '../components/layout/Container';
 import Row from '../components/layout/Row';
 import Column from '../components/layout/Column';
 import ResponsiveHero from '../components/schedule-builder/client/ResponsiveHero';
-import { ScheduleProvider } from '../components/schedule-builder/context/ScheduleContext';
-import ScheduleBuilderApp from '../components/schedule-builder/client/ScheduleBuilderApp';
+import AppleScheduleBuilderApp from '../components/schedule-builder/apple';
 
 const faqs = [
   {
@@ -63,9 +62,7 @@ const ScheduleBuilderPage: React.FC = () => {
         {/* App Section */}
         <div style={{ padding: '40px 0' }} id="app">
           <Container>
-            <ScheduleProvider>
-              <ScheduleBuilderApp />
-            </ScheduleProvider>
+            <AppleScheduleBuilderApp />
           </Container>
         </div>
 
