@@ -71,9 +71,19 @@ const AppleScheduleBuilder: React.FC<AppleScheduleBuilderProps> = ({ className }
 
   // 处理时间段点击
   const handleTimeSlotClick = useCallback((hour: number, event: React.MouseEvent) => {
+    console.log('=== Day View Time Slot Click ===');
+    console.log('Current selectedDate:', selectedDate);
+    console.log('Clicked hour:', hour);
+    
     const clickDateTime = new Date(selectedDate);
     clickDateTime.setHours(hour, 0, 0, 0);
+    
+    console.log('Generated clickDateTime:', clickDateTime);
+    console.log('clickDateTime.toString():', clickDateTime.toString());
+    console.log('clickDateTime.toISOString():', clickDateTime.toISOString());
+    
     setSelectedTimeSlot(clickDateTime);
+    console.log('Set selectedTimeSlot to:', clickDateTime);
     setIsCreateModalOpen(true);
   }, [selectedDate]);
 
@@ -134,13 +144,7 @@ const AppleScheduleBuilder: React.FC<AppleScheduleBuilderProps> = ({ className }
     if (!selectedSchedule) return;
 
     try {
-      const updatedSchedule: Schedule = {
-        ...selectedSchedule,
-        ...eventData,
-        updatedAt: new Date(),
-      };
-
-      await updateSchedule(updatedSchedule);
+      await updateSchedule(selectedSchedule.id, eventData);
       setIsEditModalOpen(false);
       setSelectedSchedule(null);
     } catch (error) {

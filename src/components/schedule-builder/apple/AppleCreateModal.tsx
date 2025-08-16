@@ -69,6 +69,13 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
   // 初始化表单数据
   useEffect(() => {
     if (isOpen) {
+      console.log('=== AppleCreateModal Initialization ===');
+      console.log('initialDate received:', initialDate);
+      console.log('initialDate type:', typeof initialDate);
+      console.log('initialDate?.toString():', initialDate?.toString());
+      console.log('initialDate?.toISOString():', initialDate?.toISOString());
+      console.log('initialSchedule:', initialSchedule);
+      
       if (initialSchedule) {
         // 编辑模式：使用现有数据
         const startTime = new Date(initialSchedule.startTime);
@@ -94,6 +101,22 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
         // 创建模式：使用默认值
         const startTime = initialDate || new Date();
         const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 默认1小时
+        
+        console.log('=== Create Mode Time Setup ===');
+        console.log('Using startTime:', startTime);
+        console.log('startTime.toString():', startTime.toString());
+        console.log('startTime.toISOString():', startTime.toISOString());
+        console.log('Generated endTime:', endTime);
+        console.log('endTime.toString():', endTime.toString());
+        console.log('BEFORE FIX - formatTimeForInput(startTime):', formatTimeForInput(startTime));
+        console.log('BEFORE FIX - formatTimeForInput(endTime):', formatTimeForInput(endTime));
+        console.log('startTime local info:', {
+          year: startTime.getFullYear(),
+          month: startTime.getMonth() + 1,
+          date: startTime.getDate(),
+          hours: startTime.getHours(),
+          minutes: startTime.getMinutes()
+        });
         
         setFormData({
           title: '',
@@ -217,14 +240,21 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
     }
   }, [onDelete]);
 
-  // 格式化时间用于输入
+  // 格式化时间用于输入（考虑本地时区）
   const formatTimeForInput = useCallback((date: Date) => {
-    return date.toISOString().slice(0, 16);
+    // 获取本地时区偏移量（分钟）
+    const timezoneOffset = date.getTimezoneOffset();
+    // 创建本地时间的副本并调整时区偏移
+    const localDate = new Date(date.getTime() - (timezoneOffset * 60 * 1000));
+    // 返回本地时间的 ISO 字符串（不包含时区信息）
+    return localDate.toISOString().slice(0, 16);
   }, []);
 
   // 处理时间输入变化
   const handleTimeChange = useCallback((field: 'startTime' | 'endTime', value: string) => {
+    // 创建本地时间（避免时区转换问题）
     const newTime = new Date(value);
+    console.log(`handleTimeChange - ${field}:`, value, '->', newTime);
     handleInputChange(field, newTime);
   }, [handleInputChange]);
 
@@ -320,8 +350,24 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
                 <button
                   key={label}
                   type="button"
-                  className="apple-button-secondary"
-                  style={{ fontSize: '14px', padding: '6px 12px' }}
+                  style={{ 
+                    fontSize: '14px', 
+                    padding: '6px 12px',
+                    background: '#F2F2F7',
+                    color: '#1D1D1F',
+                    border: '1px solid #D1D1D6',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#E5E5EA';
+                    e.currentTarget.style.borderColor = '#AEAEB2';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#F2F2F7';
+                    e.currentTarget.style.borderColor = '#D1D1D6';
+                  }}
                   onClick={() => handleDurationPreset(minutes)}
                 >
                   {label}
@@ -420,8 +466,24 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
                 <button
                   key={label}
                   type="button"
-                  className="apple-button-secondary"
-                  style={{ fontSize: '13px', padding: '6px 10px' }}
+                  style={{ 
+                    fontSize: '13px', 
+                    padding: '6px 10px',
+                    background: '#F2F2F7',
+                    color: '#1D1D1F',
+                    border: '1px solid #D1D1D6',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#E5E5EA';
+                    e.currentTarget.style.borderColor = '#AEAEB2';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#F2F2F7';
+                    e.currentTarget.style.borderColor = '#D1D1D6';
+                  }}
                   onClick={() => handleAddReminder(minutes)}
                 >
                   + {label}
@@ -454,7 +516,29 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
             {isEditing && onDelete && (
               <button
                 type="button"
-                className="apple-button-danger"
+                style={{
+                  background: '#FF3B30',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  minHeight: '44px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#E6342A';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#FF3B30';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
                 onClick={handleDelete}
               >
                 Delete
@@ -462,14 +546,63 @@ const AppleCreateModal: React.FC<AppleCreateModalProps> = ({
             )}
             <button
               type="button"
-              className="apple-button-secondary"
+              style={{
+                background: '#F2F2F7',
+                color: '#1D1D1F',
+                border: '1px solid #D1D1D6',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minHeight: '44px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#E5E5EA';
+                e.currentTarget.style.borderColor = '#AEAEB2';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#F2F2F7';
+                e.currentTarget.style.borderColor = '#D1D1D6';
+              }}
               onClick={onClose}
             >
               Cancel
             </button>
             <button
               type="button"
-              className="apple-button"
+              style={{
+                background: isSubmitting ? '#AEAEB2' : '#007AFF',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                minHeight: '44px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.background = '#0056CC';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.background = '#007AFF';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
               onClick={handleSave}
               disabled={isSubmitting}
             >
