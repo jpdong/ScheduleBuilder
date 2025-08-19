@@ -130,7 +130,27 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     html2canvas(calendarElement as HTMLElement, {
       scale: 2,
       useCORS: true,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      onclone: (clonedDoc) => {
+        // Force black text color in cloned document for better visibility
+        const allElements = clonedDoc.querySelectorAll('*');
+        allElements.forEach((el) => {
+          const element = el as HTMLElement;
+          const styles = element.style;
+          const computedStyle = window.getComputedStyle(element);
+          
+          // Check if element has white text color
+          if (computedStyle.color === 'rgb(255, 255, 255)' || 
+              computedStyle.color === 'white' || 
+              computedStyle.color === '#ffffff' || 
+              computedStyle.color === '#fff' ||
+              styles.color === 'white' ||
+              styles.color === '#ffffff' ||
+              styles.color === '#fff') {
+            element.style.setProperty('color', '#000000', 'important');
+          }
+        });
+      }
     }).then((canvas: HTMLCanvasElement) => {
       // Remove loading indicator
       modalContent.removeChild(loadingIndicator);

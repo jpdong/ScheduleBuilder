@@ -133,6 +133,27 @@ const ScheduleBuilderPage: React.FC = () => {
         allowTaint: false,
         height: (mainContent as HTMLElement).scrollHeight,
         width: (mainContent as HTMLElement).scrollWidth,
+        logging: false,
+        onclone: (clonedDoc) => {
+          // Force black text color in cloned document for better visibility
+          const allElements = clonedDoc.querySelectorAll('*');
+          allElements.forEach((el) => {
+            const element = el as HTMLElement;
+            const styles = element.style;
+            const computedStyle = window.getComputedStyle(element);
+            
+            // Check if element has white text color
+            if (computedStyle.color === 'rgb(255, 255, 255)' || 
+                computedStyle.color === 'white' || 
+                computedStyle.color === '#ffffff' || 
+                computedStyle.color === '#fff' ||
+                styles.color === 'white' ||
+                styles.color === '#ffffff' ||
+                styles.color === '#fff') {
+              element.style.setProperty('color', '#000000', 'important');
+            }
+          });
+        }
       });
 
       // 恢复原始样式
@@ -359,7 +380,8 @@ const ScheduleBuilderPage: React.FC = () => {
             background: 'white',
             borderRadius: '16px',
             padding: '24px',
-            width: '90vw',
+            width: '70vw',
+            maxWidth: '800px',
             height: '90vh',
             display: 'flex',
             flexDirection: 'column',
