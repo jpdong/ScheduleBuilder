@@ -60,7 +60,7 @@ const ScheduleBuilderPage: React.FC = () => {
 
   const handleExportImage = async () => {
     if (!scheduleBuilderRef.current) return;
-    
+
     try {
       // 找到主内容区域，保留除了 new 按钮之外的所有内容
       const mainContent = scheduleBuilderRef.current.querySelector('.apple-main-content');
@@ -91,11 +91,11 @@ const ScheduleBuilderPage: React.FC = () => {
         alignItems: string;
         justifyContent: string;
       }> = [];
-      
+
       eventCards.forEach((card, index) => {
         const element = card as HTMLElement;
         const computedStyle = window.getComputedStyle(element);
-        
+
         originalEventStyles[index] = {
           border: element.style.border,
           borderRadius: element.style.borderRadius,
@@ -109,7 +109,7 @@ const ScheduleBuilderPage: React.FC = () => {
           alignItems: element.style.alignItems,
           justifyContent: element.style.justifyContent
         };
-        
+
         // 使用计算后的样式值，保持原始尺寸和布局
         element.style.border = `${computedStyle.borderWidth} solid rgba(60, 60, 67, 0.36)`;
         element.style.borderRadius = computedStyle.borderRadius;
@@ -117,7 +117,7 @@ const ScheduleBuilderPage: React.FC = () => {
         element.style.padding = computedStyle.padding;
         element.style.width = computedStyle.width;
         element.style.boxSizing = 'border-box';
-        
+
         // 确保文本对齐和布局保持原样
         element.style.textAlign = computedStyle.textAlign || 'left';
         element.style.display = computedStyle.display;
@@ -127,12 +127,11 @@ const ScheduleBuilderPage: React.FC = () => {
       });
 
       const canvas = await html2canvas(mainContent as HTMLElement, {
-        backgroundColor: '#ffffff',
-        scale: 2,
         useCORS: true,
         allowTaint: false,
         height: (mainContent as HTMLElement).scrollHeight,
         width: (mainContent as HTMLElement).scrollWidth,
+        logging: false
       });
 
       // 恢复原始样式
@@ -141,7 +140,7 @@ const ScheduleBuilderPage: React.FC = () => {
       } else if (addButton) {
         (addButton as HTMLElement).style.display = '';
       }
-      
+
       // 恢复事件卡片样式
       eventCards.forEach((card, index) => {
         const element = card as HTMLElement;
@@ -158,7 +157,7 @@ const ScheduleBuilderPage: React.FC = () => {
         element.style.alignItems = original.alignItems || '';
         element.style.justifyContent = original.justifyContent || '';
       });
-      
+
       const imageUrl = canvas.toDataURL('image/png');
       setPreviewImageUrl(imageUrl);
       setShowImagePreview(true);
@@ -170,7 +169,7 @@ const ScheduleBuilderPage: React.FC = () => {
 
   const handleDownloadImage = () => {
     if (!previewImageUrl) return;
-    
+
     const link = document.createElement('a');
     link.download = `schedule-${new Date().toISOString().split('T')[0]}.png`;
     link.href = previewImageUrl;
@@ -186,12 +185,12 @@ const ScheduleBuilderPage: React.FC = () => {
 
   const handlePrint = () => {
     if (!scheduleBuilderRef.current) return;
-    
+
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    
+
     const scheduleHtml = scheduleBuilderRef.current.outerHTML;
-    
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -224,7 +223,7 @@ const ScheduleBuilderPage: React.FC = () => {
         </body>
       </html>
     `);
-    
+
     printWindow.document.close();
   };
 
@@ -239,10 +238,10 @@ const ScheduleBuilderPage: React.FC = () => {
         <div style={{ padding: '40px 0' }} id="app">
           <Container>
             {/* Export and Print Buttons */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'flex-end', 
-              gap: '12px', 
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '12px',
               marginBottom: '20px',
               paddingRight: '20px'
             }}>
@@ -275,7 +274,7 @@ const ScheduleBuilderPage: React.FC = () => {
                 📷 Export Image
               </button>
             </div>
-            
+
             <div ref={scheduleBuilderRef}>
               <AppleScheduleBuilderApp />
             </div>
@@ -338,7 +337,7 @@ const ScheduleBuilderPage: React.FC = () => {
           </Container>
         </div>
       </div>
-      
+
       {/* Image Preview Modal */}
       {showImagePreview && (
         <div style={{
@@ -359,7 +358,8 @@ const ScheduleBuilderPage: React.FC = () => {
             background: 'white',
             borderRadius: '16px',
             padding: '24px',
-            width: '90vw',
+            width: '70vw',
+            maxWidth: '800px',
             height: '90vh',
             display: 'flex',
             flexDirection: 'column',
@@ -409,7 +409,7 @@ const ScheduleBuilderPage: React.FC = () => {
                 ×
               </button>
             </div>
-            
+
             {/* Image Preview */}
             <div style={{
               display: 'flex',
@@ -421,8 +421,8 @@ const ScheduleBuilderPage: React.FC = () => {
               position: 'relative',
               width: '100%'
             }}>
-              <img 
-                src={previewImageUrl} 
+              <img
+                src={previewImageUrl}
                 alt="Schedule Preview"
                 style={{
                   maxWidth: '100%',
@@ -445,13 +445,13 @@ const ScheduleBuilderPage: React.FC = () => {
                     const containerHeight = container.clientHeight - 32;
                     const imgAspectRatio = img.naturalWidth / img.naturalHeight;
                     const containerAspectRatio = containerWidth / containerHeight;
-                    
+
                     // 重置样式
                     img.style.width = 'auto';
                     img.style.height = 'auto';
                     img.style.maxWidth = '100%';
                     img.style.maxHeight = '100%';
-                    
+
                     // 根据比例决定缩放方式
                     if (imgAspectRatio > containerAspectRatio) {
                       // 图片比容器更宽，以宽度为限制
@@ -466,7 +466,7 @@ const ScheduleBuilderPage: React.FC = () => {
                 }}
               />
             </div>
-            
+
             {/* Modal Actions */}
             <div style={{
               display: 'flex',
@@ -526,7 +526,7 @@ const ScheduleBuilderPage: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       <Footer />
     </>
   );

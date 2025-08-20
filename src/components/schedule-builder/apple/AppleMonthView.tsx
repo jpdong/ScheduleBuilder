@@ -1,6 +1,9 @@
 "use client"
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { Schedule } from '../types';
+import useContainerHeight from '../hooks/useContainerHeight';
+import AdaptiveEventDisplay from './AdaptiveEventDisplay';
+import CalendarErrorBoundary from './CalendarErrorBoundary';
 
 interface AppleMonthViewProps {
   schedules: Schedule[];
@@ -17,6 +20,16 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
   onScheduleClick,
   onCreateSchedule
 }) => {
+  // Use container height hook for responsive sizing
+  const { containerRef, availableHeight, cellHeight, isResizing, hasError, error } = useContainerHeight({
+    headerHeight: 60, // Height of weekday headers
+    padding: 0, // No extra padding - let the container fill completely
+    rowCount: 6, // 6 weeks in calendar grid
+    minCellHeight: 60,
+    maxCellHeight: 150,
+    debounceMs: 100
+  });
+
   // 获取月份的所有日期（包括上月末和下月初的日期以填满6x7网格）
   const monthDates = useMemo(() => {
     const year = selectedDate.getFullYear();
@@ -42,7 +55,7 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
     return dates;
   }, [selectedDate]);
 
-  // 获取指定日期的事件
+  // 获取指定日期的事件 - 使用 useMemo 优化性能
   const getEventsForDate = useCallback((date: Date) => {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -61,6 +74,16 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
       );
     }).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
   }, [schedules]);
+
+  // 预计算所有日期的事件以提高性能
+  const eventsMap = useMemo(() => {
+    const map = new Map<string, Schedule[]>();
+    monthDates.forEach(date => {
+      const dateKey = date.toDateString();
+      map.set(dateKey, getEventsForDate(date));
+    });
+    return map;
+  }, [monthDates, getEventsForDate]);
 
   // 处理日期点击
   const handleDateClick = useCallback((date: Date) => {
@@ -97,6 +120,19 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
     };
   }, [selectedDate]);
 
+  // Calculate maximum events per cell based on available height
+  const maxEventsPerCell = useMemo(() => {
+    const eventHeight = 16; // Height of each event item
+    const eventSpacing = 2; // Spacing between events
+    const dateNumberHeight = 20; // Height reserved for date number
+    const cellPadding = 8; // Internal cell padding
+    
+    const availableEventSpace = cellHeight - dateNumberHeight - cellPadding;
+    const maxEvents = Math.floor(availableEventSpace / (eventHeight + eventSpacing));
+    
+    return Math.max(1, maxEvents); // Always show at least 1 event
+  }, [cellHeight]);
+
   // 格式化事件显示
   const formatEventForMonth = useCallback((event: Schedule) => {
     const startTime = new Date(event.startTime);
@@ -116,8 +152,26 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
   // 周标题
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  // Show error state if height calculation failed
+  if (hasError) {
+    console.error('AppleMonthView height calculation error:', error);
+    return (
+      <div className="apple-month-view-error">
+        <p>Unable to calculate calendar dimensions. Using fallback layout.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="apple-month-view">
+    <CalendarErrorBoundary>
+      <div 
+        ref={containerRef}
+        className={`apple-month-view ${isResizing ? 'resizing' : ''}`}
+        style={{
+          '--calculated-cell-height': `${cellHeight}px`,
+          '--max-events-per-cell': maxEventsPerCell
+        } as React.CSSProperties}
+      >
       {/* 月视图头部 - 星期标题 */}
       <div className="apple-month-header">
         {weekDays.map((day, index) => (
@@ -130,7 +184,7 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
       {/* 月视图网格 */}
       <div className="apple-month-grid">
         {monthDates.map((date, index) => {
-          const events = getEventsForDate(date);
+          const events = eventsMap.get(date.toDateString()) || [];
           const { isToday, isSelected, isCurrentMonth, isWeekend } = getDateStatus(date);
           
           return (
@@ -144,38 +198,14 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
                 {date.getDate()}
               </div>
 
-              {/* 事件列表 */}
-              <div className="apple-month-events">
-                {events.slice(0, 3).map((event) => {
-                  const formattedEvent = formatEventForMonth(event);
-                  return (
-                    <div
-                      key={event.id}
-                      className="apple-month-event"
-                      style={{ backgroundColor: event.color || '#007AFF' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onScheduleClick(event);
-                      }}
-                      title={`${event.title} - ${formattedEvent.displayTime}`}
-                    >
-                      <span className="apple-month-event-time">
-                        {formattedEvent.displayTime}
-                      </span>
-                      <span className="apple-month-event-title">
-                        {formattedEvent.displayTitle}
-                      </span>
-                    </div>
-                  );
-                })}
-                
-                {/* 显示更多事件指示器 */}
-                {events.length > 3 && (
-                  <div className="apple-month-more-events">
-                    +{events.length - 3} more
-                  </div>
-                )}
-              </div>
+              {/* 自适应事件显示 */}
+              <AdaptiveEventDisplay
+                events={events}
+                availableHeight={cellHeight - 28} // Subtract date number and padding
+                maxVisibleEvents={maxEventsPerCell}
+                onEventClick={onScheduleClick}
+                cellHeight={cellHeight}
+              />
 
               {/* 空状态点击区域 - 总是显示以便点击创建事件 */}
               {isCurrentMonth && (
@@ -194,7 +224,18 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
         })}
       </div>
     </div>
+    </CalendarErrorBoundary>
   );
 };
 
-export default AppleMonthView;
+// 使用 memo 优化组件性能
+export default memo(AppleMonthView, (prevProps, nextProps) => {
+  return (
+    prevProps.selectedDate.getTime() === nextProps.selectedDate.getTime() &&
+    prevProps.schedules.length === nextProps.schedules.length &&
+    prevProps.schedules.every((schedule, index) => 
+      schedule.id === nextProps.schedules[index]?.id &&
+      schedule.updatedAt === nextProps.schedules[index]?.updatedAt
+    )
+  );
+});

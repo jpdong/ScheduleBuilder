@@ -128,9 +128,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     
     // Use html2canvas to generate image
     html2canvas(calendarElement as HTMLElement, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff'
+      useCORS: true
     }).then((canvas: HTMLCanvasElement) => {
       // Remove loading indicator
       modalContent.removeChild(loadingIndicator);

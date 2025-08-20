@@ -685,7 +685,9 @@ const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
     try {
       console.log("Using html2canvas to generate image");
       if (html2canvas) {
-        html2canvas(calendarElement as HTMLElement).then((canvas: HTMLCanvasElement) => {
+        html2canvas(calendarElement as HTMLElement, {
+          useCORS: true
+        }).then((canvas: HTMLCanvasElement) => {
           // Remove loading indicator
           modalContent.removeChild(loadingIndicator);
           
