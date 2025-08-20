@@ -7,6 +7,7 @@ import AppleCreateModal from './AppleCreateModal';
 import AppleQuickActions from './AppleQuickActions';
 import AppleWeekView from './AppleWeekView';
 import AppleMonthView from './AppleMonthView';
+import useViewportHeight from '../hooks/useViewportHeight';
 import './apple-styles.css';
 
 interface AppleScheduleBuilderProps {
@@ -22,6 +23,9 @@ const AppleScheduleBuilder: React.FC<AppleScheduleBuilderProps> = ({ className }
     updateSchedule,
     deleteSchedule,
   } = useSchedule();
+
+  // Initialize viewport height for mobile optimization
+  const { viewportHeight, isLandscape, isMobile } = useViewportHeight();
 
   // 组件状态
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('day');

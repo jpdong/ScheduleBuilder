@@ -189,6 +189,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 /* 头部控制区域 */
@@ -289,11 +290,18 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex shrinking */
 }
 
 /* 视图切换动画 */
 .apple-view-transition {
   animation: viewFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes viewFadeIn {
@@ -772,7 +780,8 @@
   }
   
   .apple-month-grid {
-    min-height: 400px;
+    /* Remove fixed min-height on mobile */
+    min-height: 0;
   }
   
   .apple-month-date {
@@ -992,9 +1001,19 @@
 /* Month View 样式 */
 .apple-month-view {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Ensure the view fills the container completely */
+  flex: 1;
+  /* Debug: Add temporary border to see the boundaries */
+  /* border: 2px solid red; */
+}
+
+.apple-month-view.resizing {
+  transition: none; /* Disable transitions during resize for better performance */
 }
 
 .apple-month-header {
@@ -1003,6 +1022,9 @@
   border-bottom: 1px solid var(--apple-opacity-separator);
   background: var(--apple-background-secondary);
   flex-shrink: 0;
+  height: 60px; /* Fixed header height */
+  min-height: 60px; /* Ensure minimum height */
+  max-height: 60px; /* Prevent expansion */
 }
 
 .apple-month-weekday {
@@ -1011,6 +1033,9 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--apple-label-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .apple-month-weekday.weekend {
@@ -1025,20 +1050,26 @@
   gap: 1px;
   background: var(--apple-gray-5);
   overflow: hidden;
-  min-height: 500px;
-  height: calc(100% - 60px);
+  /* Ensure grid fills all available space */
+  width: 100%;
+  min-height: 0; /* Allow flex shrinking */
+  transition: height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .apple-month-date {
   background: var(--apple-background);
   padding: var(--spacing-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  height: 105px;
+  /* Ensure cells fill grid space completely */
+  width: 100%;
+  height: 100%;
+  min-height: var(--calculated-cell-height, 60px);
+  box-sizing: border-box;
 }
 
 .apple-month-date:hover {
@@ -1077,6 +1108,7 @@
   flex-direction: column;
   gap: 2px;
   overflow: hidden;
+  height: calc(100% - 20px - var(--spacing-sm)); /* Subtract date number height and padding */
 }
 
 .apple-month-event {
@@ -1141,6 +1173,212 @@
   color: var(--apple-blue);
   font-size: 18px;
   font-weight: bold;
+}
+
+/* 响应式高度支持 */
+.apple-view-container {
+  flex: 1;
+  overflow: hidden;
+  background: var(--apple-background);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  /* Use viewport height for better mobile support */
+  height: calc(100vh - 200px);
+  max-height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 移动端视口高度优化 */
+@supports (-webkit-touch-callout: none) {
+  .apple-view-container {
+    /* iOS Safari viewport height fix */
+    height: calc(100vh - 200px);
+    height: calc(var(--vh, 1vh) * 100 - 200px);
+  }
+}
+
+/* 移动端横屏优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+  .apple-month-view {
+    --min-cell-height: 40px;
+    --max-cell-height: 80px;
+    --event-height: 12px;
+    --date-number-height: 16px;
+  }
+  
+  .apple-view-container {
+    height: calc(100vh - 120px);
+    height: calc(var(--vh, 1vh) * 100 - 120px);
+  }
+  
+  .apple-month-header {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .apple-month-weekday {
+    padding: var(--spacing-xs);
+    font-size: 11px;
+  }
+  
+  .apple-month-date {
+    padding: var(--spacing-xs);
+  }
+  
+  .apple-month-date-number {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+  
+  .apple-month-event {
+    font-size: 8px;
+    padding: 1px 2px;
+    min-height: 12px;
+    height: 12px;
+  }
+  
+  .apple-month-event-time {
+    display: none; /* 隐藏时间以节省空间 */
+  }
+  
+  .apple-month-more-events {
+    font-size: 8px;
+    height: 10px;
+  }
+}
+
+/* 移动端竖屏优化 */
+@media (max-width: 768px) and (orientation: portrait) {
+  .apple-month-view {
+    --min-cell-height: 50px;
+    --max-cell-height: 120px;
+    --event-height: 14px;
+    --date-number-height: 18px;
+  }
+  
+  .apple-view-container {
+    height: calc(100vh - 180px);
+    height: calc(var(--vh, 1vh) * 100 - 180px);
+  }
+}
+
+/* 动态单元格高度 */
+.apple-month-view {
+  --min-cell-height: 60px;
+  --max-cell-height: 150px;
+  --event-height: 16px;
+  --event-spacing: 2px;
+  --date-number-height: 20px;
+  --cell-padding: 8px;
+}
+
+/* 事件溢出处理 */
+.apple-month-event {
+  background: var(--apple-blue);
+  color: white;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--event-height);
+  height: var(--event-height);
+  flex-shrink: 0;
+}
+
+/* 紧凑模式事件样式 */
+.apple-month-event.compact {
+  padding: 1px 3px;
+  font-size: 9px;
+  gap: 2px;
+  border-radius: 1px;
+}
+
+.apple-month-more-events.compact {
+  font-size: 8px;
+  padding: 1px;
+}
+
+/* 错误处理样式 */
+.apple-calendar-error-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+  background: var(--apple-background);
+  border-radius: var(--radius-xl);
+}
+
+.apple-calendar-error-fallback .error-content {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  max-width: 400px;
+}
+
+.apple-calendar-error-fallback h3 {
+  color: var(--apple-label);
+  margin-bottom: var(--spacing-lg);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.apple-calendar-error-fallback p {
+  color: var(--apple-label-secondary);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.5;
+}
+
+.apple-month-view-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 300px;
+  background: var(--apple-background-secondary);
+  border-radius: var(--radius-lg);
+  margin: var(--spacing-lg);
+}
+
+.apple-month-view-error p {
+  color: var(--apple-label-secondary);
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+/* 小屏幕优化 */
+@media (max-height: 600px) {
+  .apple-month-view {
+    --min-cell-height: 50px;
+    --event-height: 14px;
+    --date-number-height: 18px;
+  }
+  
+  .apple-month-event {
+    font-size: 9px;
+    padding: 1px 3px;
+  }
+  
+  .apple-month-date-number {
+    font-size: 12px;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-height: 480px) {
+  .apple-month-view {
+    --min-cell-height: 40px;
+    --event-height: 12px;
+    --date-number-height: 16px;
+  }
+  
+  .apple-month-event-time {
+    display: none; /* 隐藏时间以节省空间 */
+  }
 }
 
 /* 高对比度模式 */
