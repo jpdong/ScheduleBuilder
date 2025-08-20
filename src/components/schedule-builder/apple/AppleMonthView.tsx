@@ -30,15 +30,6 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
     debounceMs: 100
   });
 
-  // Show error state if height calculation failed
-  if (hasError) {
-    console.error('AppleMonthView height calculation error:', error);
-    return (
-      <div className="apple-month-view-error">
-        <p>Unable to calculate calendar dimensions. Using fallback layout.</p>
-      </div>
-    );
-  }
   // 获取月份的所有日期（包括上月末和下月初的日期以填满6x7网格）
   const monthDates = useMemo(() => {
     const year = selectedDate.getFullYear();
@@ -160,6 +151,16 @@ const AppleMonthView: React.FC<AppleMonthViewProps> = ({
 
   // 周标题
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  // Show error state if height calculation failed
+  if (hasError) {
+    console.error('AppleMonthView height calculation error:', error);
+    return (
+      <div className="apple-month-view-error">
+        <p>Unable to calculate calendar dimensions. Using fallback layout.</p>
+      </div>
+    );
+  }
 
   return (
     <CalendarErrorBoundary>

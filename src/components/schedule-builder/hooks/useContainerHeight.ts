@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, RefObject, useCallback, useMemo } from 're
 import useViewportHeight from './useViewportHeight';
 
 interface ContainerHeightHook {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   availableHeight: number;
   cellHeight: number;
   isResizing: boolean;
@@ -35,7 +35,7 @@ const useContainerHeight = (options: UseContainerHeightOptions = {}): ContainerH
   const [isResizing, setIsResizing] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error>();
-  const resizeTimeoutRef = useRef<NodeJS.Timeout>();
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Use viewport height hook for mobile optimization
   const { viewportHeight, isLandscape, isMobile } = useViewportHeight();
@@ -108,7 +108,7 @@ const useContainerHeight = (options: UseContainerHeightOptions = {}): ContainerH
       setAvailableHeight(minCellHeight * rowCount);
       setCellHeight(minCellHeight);
     }
-  }, [headerHeight, padding, rowCount, minCellHeight, maxCellHeight, isMobile, isLandscape, viewportHeight]);
+  }, [headerHeight, rowCount, minCellHeight, maxCellHeight, isMobile, isLandscape, viewportHeight]);
 
   const debouncedCalculateHeight = useCallback(() => {
     setIsResizing(true);
