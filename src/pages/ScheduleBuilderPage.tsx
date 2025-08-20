@@ -127,7 +127,6 @@ const ScheduleBuilderPage: React.FC = () => {
       });
 
       const canvas = await html2canvas(mainContent as HTMLElement, {
-        background: '#ffffff',
         useCORS: true,
         allowTaint: false,
         height: (mainContent as HTMLElement).scrollHeight,
